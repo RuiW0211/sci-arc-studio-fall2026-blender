@@ -1,0 +1,25 @@
+{
+  "_comment": "Viewer settings. Layers come from the GLB (extras.layer = Blender collection); this file only gives display names, order and default visibility. Unknown layers still appear under their own name. Camera values are three.js coordinates: x = east, y = up (m, NAVD88), z = -north, from the site origin E 384580 / N 3768520.",
+  "model": "assets/context.glb",
+  "lidar": { "points": "data/lidar_points.bin", "meta": "data/lidar_points.json", "size": 0.25 },
+  "defaultMode": "mesh",
+  "layers": {
+    "Terrain":   { "label": "Terrain",          "order": 1, "visible": true },
+    "Buildings": { "label": "Buildings",        "order": 2, "visible": true },
+    "Y1_Parcel": { "label": "Y-1 parcel",       "order": 3, "visible": true, "overlay": true },
+    "Landmarks": { "label": "Landmarks",        "order": 4, "visible": true },
+    "Trees":     { "label": "Trees",            "order": 5, "visible": true },
+    "Design":    { "label": "Design",           "order": 6, "visible": false }
+  },
+  "modelPoints": {
+    "_comment": "Point budget is split by surface area x layer weight x distance falloff (1 / (1 + (d / falloff)^2), d = distance of each object from the site origin), so points gather around Y-1.",
+    "budget": 1500000, "size": 0.2, "falloff": 220,
+    "layerWeight": { "Terrain": 1.0, "Buildings": 0.25, "Landmarks": 6, "Trees": 4 }
+  },
+  "views": [
+    { "name": "Overview",           "position": [260, 260, 300],      "target": [0, 100, 0] },
+    { "name": "4th & Hill",         "position": [24, 88.2, 80],       "target": [-15, 100, -5] },
+    { "name": "Angels Flight top",  "position": [-4.4, 119.8, -61.9], "target": [47.2, 95.6, -20.8] },
+    { "name": "Plan",               "position": [0, 650, 0.01],       "target": [0, 95, 0] }
+  ]
+}

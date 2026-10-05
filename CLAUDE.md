@@ -26,6 +26,15 @@ sync with mesh edits. See `site-model/BACKLOG.md`.
 - `site-model/data/`: small processed inputs, committed so Blender builds work without the raw LiDAR.
 - `site-model/exports/context.glb`: the web model.
 
+## Blender → web workflow (the current standard; do not change it without the owner's agreement)
+
+1. **Collections are the web layers.** `site-model/scripts/export_glb.py`, run inside Blender, tags every object with `extras.layer = <innermost collection name>` and exports `site-model/exports/context.glb` (Draco, +Y up, extras). It skips the default `Collection` and any collection whose name starts with `_`.
+2. **The viewer builds its layer toggles from the GLB at load time.** Never hard-code layer lists. `web/config.json` holds only optional display names, order and default visibility, and unknown layers appear under their raw name.
+3. **Generated vs manual.** `Terrain`, `Buildings`, `Y1_Parcel`, `Landmarks` and `Trees` are cleared and rebuilt by the `build_*.py` scripts. Put manual work (design options, hand-refined buildings) in your own collections, such as `Design` or `Option_A`. The scripts never touch those.
+4. **One GLB location.** The GLB lives only in `site-model/exports/`. The Pages workflow copies it into the deployed site, and `web/serve.py` does the same locally. Do not commit a second copy under `web/`.
+5. **All viewer modes share the layers.** The mesh-sampled point cloud is generated from the same GLB, so it follows Blender edits and layer toggles. The LiDAR mode is independent.
+6. **Update path:** edit in Blender → run `export_glb.py` → branch + PR → owner merges → Pages redeploys in about a minute.
+
 ## Conventions
 
 - One coordinate frame everywhere: EPSG:26911, metres, NAVD88. The local origin is E 384580 / N 3768520 (`site-model/data/site.json`). three.js: x = east, y = up, z = −north.

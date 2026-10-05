@@ -23,6 +23,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      # The GLB lives only in site-model/exports/ (one location); publish it under web/assets/
+      - name: Copy model exports into the site
+        run: |
+          mkdir -p web/assets
+          cp site-model/exports/*.glb web/assets/
+          rm -f web/serve.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
