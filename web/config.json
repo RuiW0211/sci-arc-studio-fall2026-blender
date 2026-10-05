@@ -9,7 +9,8 @@
     "Y1_Parcel": { "label": "Y-1 parcel",       "order": 3, "visible": true, "overlay": true },
     "Landmarks": { "label": "Landmarks",        "order": 4, "visible": true },
     "Trees":     { "label": "Trees",            "order": 5, "visible": true },
-    "Design":    { "label": "Design",           "order": 6, "visible": false }
+    "Design":    { "label": "Design",           "order": 6, "visible": false },
+    "_other":    { "label": "Other (LiDAR only)", "order": 9, "visible": true }
   },
   "modelPoints": {
     "_comment": "Point budget is split by surface area x layer weight x distance falloff (1 / (1 + (d / falloff)^2), d = distance of each object from the site origin), so points gather around Y-1.",

@@ -52,11 +52,21 @@ model.traverse((o) => {
   L.objects.push(o);
   o.traverse((m) => m.isMesh && L.meshes.push(m));
 });
+// LiDAR layers that have no mesh counterpart (e.g. "_other") get a toggle too; the LiDAR meta is tiny
+const lidarMeta = await (await fetch(cfg.lidar.meta)).json();
+for (const name of new Set(lidarMeta.attributes?.object?.layers ?? [])) {
+  if (!layers.has(name)) {
+    const c = cfg.layers[name] || {};
+    layers.set(name, { name, cfg: c, objects: [], meshes: [], visible: c.visible ?? true, points: null });
+  }
+}
 const ordered = [...layers.values()].sort((a, b) => (a.cfg.order ?? 99) - (b.cfg.order ?? 99) || a.name.localeCompare(b.name));
 
 let mode = null;
 const pointsGroup = new THREE.Group();
 scene.add(pointsGroup);
+const lidarGroup = new THREE.Group();
+scene.add(lidarGroup);
 let lidar = null;
 
 function applyVisibility() {
@@ -65,15 +75,16 @@ function applyVisibility() {
     const showMesh = Boolean(L.visible && (mode === "mesh" || L.cfg.overlay));
     for (const o of L.objects) o.visible = showMesh;
     if (L.points) L.points.visible = Boolean(L.visible && mode === "points" && !L.cfg.overlay);
+    if (L.lidar) L.lidar.visible = Boolean(L.visible && mode === "lidar");
   }
-  if (lidar) lidar.points.visible = mode === "lidar";
 }
 
 $("#layers").innerHTML = "";
 for (const L of ordered) {
   const row = document.createElement("label");
   row.className = "layer";
-  row.innerHTML = `<input type="checkbox" ${L.visible ? "checked" : ""}> ${L.cfg.label || L.name} <span class="n">${L.objects.length}</span>`;
+  const n = L.objects.length ? L.objects.length : "LiDAR";
+  row.innerHTML = `<input type="checkbox" ${L.visible ? "checked" : ""}> ${L.cfg.label || L.name} <span class="n">${n}</span>`;
   row.querySelector("input").onchange = (e) => { L.visible = e.target.checked; applyVisibility(); };
   $("#layers").append(row);
 }
@@ -170,29 +181,59 @@ async function buildModelPoints() {
 }
 
 // ---------- LiDAR (2023 USGS), loaded on first use ----------
+// Points are split per layer (from the "object" attribute) so layer toggles apply to the LiDAR too.
 async function loadLidar() {
   status("Loading LiDAR…");
-  const meta = await (await fetch(cfg.lidar.meta)).json();
-  const buf = await (await fetch(cfg.lidar.points)).arrayBuffer();
+  const meta = lidarMeta;
+  const base = cfg.lidar.meta.replace(/[^/]*$/, "");
+  const objAttr = meta.attributes?.object;
+  const [buf, objBuf] = await Promise.all([
+    fetch(cfg.lidar.points).then((r) => r.arrayBuffer()),
+    objAttr ? fetch(base + objAttr.file).then((r) => r.arrayBuffer()) : null,
+  ]);
   const n = meta.count, dv = new DataView(buf);
-  const pos = new Float32Array(n * 3), zs = new Float32Array(n), cls = new Uint8Array(n), inten = new Uint8Array(n);
+  const obj = objBuf ? new Uint16Array(objBuf) : new Uint16Array(n);
+  const objNames = objAttr?.names ?? ["_other"], objLayers = objAttr?.layers ?? ["_other"];
+  const material = pointMaterial(cfg.lidar.size ?? 0.3);
+  // bucket point indices by layer
+  const byLayer = new Map();
   for (let i = 0; i < n; i++) {
-    const o = i * meta.record_bytes;
-    const z = dv.getInt16(o + 4, true) * meta.scale + meta.z_base;
-    pos[3 * i] = dv.getInt16(o, true) * meta.scale;
-    pos[3 * i + 1] = z;
-    pos[3 * i + 2] = -dv.getInt16(o + 2, true) * meta.scale;
-    zs[i] = z; cls[i] = dv.getUint8(o + 6); inten[i] = dv.getUint8(o + 7);
+    const L = objLayers[obj[i]];
+    if (!byLayer.has(L)) byLayer.set(L, []);
+    byLayer.get(L).push(i);
   }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const col = new Float32Array(n * 3);
-  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
-  const points = new THREE.Points(g, pointMaterial(cfg.lidar.size ?? 0.3));
-  scene.add(points);
-  lidar = { points, zs, cls, inten, col, n, count: n };
+  const parts = [];
+  for (const [name, idx] of byLayer) {
+    const m = idx.length;
+    const pos = new Float32Array(m * 3), zs = new Float32Array(m), cls = new Uint8Array(m), inten = new Uint8Array(m), ob = new Uint16Array(m);
+    for (let j = 0; j < m; j++) {
+      const i = idx[j], o = i * meta.record_bytes;
+      const z = dv.getInt16(o + 4, true) * meta.scale + meta.z_base;
+      pos[3 * j] = dv.getInt16(o, true) * meta.scale;
+      pos[3 * j + 1] = z;
+      pos[3 * j + 2] = -dv.getInt16(o + 2, true) * meta.scale;
+      zs[j] = z; cls[j] = dv.getUint8(o + 6); inten[j] = dv.getUint8(o + 7); ob[j] = obj[i];
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    const col = new Float32Array(m * 3);
+    g.setAttribute("color", new THREE.BufferAttribute(col, 3));
+    const pts = new THREE.Points(g, material);
+    pts.userData.part = { name, zs, cls, inten, ob, col, n: m };
+    lidarGroup.add(pts);
+    parts.push(pts.userData.part);
+    const L = layers.get(name);
+    if (L) L.lidar = pts;
+  }
+  const objCount = new Uint32Array(objNames.length);
+  for (let i = 0; i < n; i++) objCount[obj[i]]++;
+  lidar = { parts, material, objNames, objLayers, objCount, count: n, how: "height", selected: -1 };
   paintLidar("height");
   status("");
+}
+function hashColor(k) {  // stable, well-spread colour per object id
+  const h = ((k * 0.61803398875) % 1 + 1) % 1;
+  return new THREE.Color().setHSL(h, 0.62, 0.55);
 }
 const RAMP = [[0.18, 0.2, 0.45], [0.13, 0.55, 0.6], [0.55, 0.78, 0.35], [0.98, 0.85, 0.3], [0.85, 0.35, 0.2]];
 function ramp(t) {
@@ -200,16 +241,23 @@ function ramp(t) {
   const k = Math.min(Math.floor(t), RAMP.length - 2), f = t - k, a = RAMP[k], b = RAMP[k + 1];
   return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
 }
-function paintLidar(how) {
-  const { zs, cls, inten, col, n } = lidar;
-  for (let i = 0; i < n; i++) {
-    let c;
-    if (how === "height") c = ramp((zs[i] - 78) / 60);
-    else if (how === "class") c = cls[i] === 2 ? [0.72, 0.6, 0.42] : zs[i] > 140 ? [0.55, 0.58, 0.62] : [0.3, 0.52, 0.36];
-    else { const v = 0.15 + (inten[i] / 255) * 0.85; c = [v, v, v]; }
-    col.set(c, 3 * i);
+const HILITE = [1.0, 0.42, 0.12];
+function paintLidar(how = lidar.how) {
+  lidar.how = how;
+  const sel = lidar.selected;
+  const tmp = new THREE.Color();
+  for (const { zs, cls, inten, ob, col, n } of lidar.parts) {
+    for (let i = 0; i < n; i++) {
+      let c;
+      if (ob[i] === sel) c = HILITE;
+      else if (how === "height") c = ramp((zs[i] - 78) / 60);
+      else if (how === "class") c = cls[i] === 2 ? [0.72, 0.6, 0.42] : zs[i] > 140 ? [0.55, 0.58, 0.62] : [0.3, 0.52, 0.36];
+      else if (how === "object") { tmp.copy(lidar.objLayers[ob[i]] === "_other" ? new THREE.Color(0.35, 0.35, 0.35) : hashColor(ob[i])); c = [tmp.r, tmp.g, tmp.b]; }
+      else { const v = 0.15 + (inten[i] / 255) * 0.85; c = [v, v, v]; }
+      col.set(c, 3 * i);
+    }
   }
-  lidar.points.geometry.attributes.color.needsUpdate = true;
+  for (const p of lidarGroup.children) p.geometry.attributes.color.needsUpdate = true;
   document.querySelectorAll("#lidarColors button").forEach((b) => b.classList.toggle("on", b.dataset.c === how));
 }
 document.querySelectorAll("#lidarColors button").forEach((b) => (b.onclick = () => paintLidar(b.dataset.c)));
@@ -241,14 +289,14 @@ async function setMode(m) {
   $("#ptsOpts").hidden = m === "mesh";
   $("#lidarOpts").hidden = m !== "lidar";
   $("#ptsColorOpts").hidden = m !== "points";
-  const mat = m === "lidar" ? lidar.points.material : pointsGroup.userData.material;
+  const mat = m === "lidar" ? lidar.material : pointsGroup.userData.material;
   if (mat) $("#ptSize").value = mat.size;
   if (m !== "mesh") hideInfo();
   busy = false;
 }
 document.querySelectorAll("#modes button").forEach((b) => (b.onclick = () => setMode(b.dataset.mode)));
 $("#ptSize").oninput = (e) => {
-  const mat = mode === "lidar" ? lidar?.points.material : pointsGroup.userData.material;
+  const mat = mode === "lidar" ? lidar?.material : pointsGroup.userData.material;
   if (mat) mat.size = +e.target.value;
 };
 
@@ -272,19 +320,33 @@ const SKIP_KEYS = new Set(["layer", "name", "scatter5"]);
 let down = null;
 renderer.domElement.addEventListener("pointerdown", (e) => (down = [e.clientX, e.clientY]));
 renderer.domElement.addEventListener("pointerup", (e) => {
-  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4 || mode !== "mesh") return;
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4 || mode === "points") return;
   ray.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
   const visible = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+  if (mode === "lidar") return pickLidar();
   const hit = ray.intersectObject(model, true).find((h) => visible(h.object));
   if (!hit) return hideInfo();
   let node = hit.object;
   while (node && !node.userData.layer) node = node.parent;
   showInfo(node || hit.object, hit.point);
+
+  // LiDAR: the clicked point's object label -> the same Blender object; highlight all its points
+  function pickLidar() {
+    ray.params.Points.threshold = 0.6;
+    const hit = ray.intersectObjects(lidarGroup.children.filter((p) => p.visible), false)[0];
+    if (!hit) { lidar.selected = -1; paintLidar(); return hideInfo(); }
+    const id = hit.object.userData.part.ob[hit.index], name = lidar.objNames[id];
+    const node = model.getObjectByName(name) || { name: name === "_other" ? "Unassigned LiDAR points" : name,
+                                                  userData: { layer: lidar.objLayers[id] } };
+    lidar.selected = name === "_other" ? -1 : id;
+    paintLidar();
+    showInfo(node, hit.point, [["LiDAR points (shown)", lidar.objCount[id].toLocaleString()]]);
+  }
 });
 function fmt(v) { return typeof v === "number" ? (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2)) : String(v); }
-function showInfo(node, point) {
+function showInfo(node, point, extra = []) {
   const L = layers.get(node.userData.layer);
-  const rows = [["Layer", L?.cfg.label || node.userData.layer || "–"], ["Elevation here", `${point.y.toFixed(1)} m`]];
+  const rows = [["Layer", L?.cfg.label || node.userData.layer || "–"], ["Elevation here", `${point.y.toFixed(1)} m`], ...extra];
   for (const [k, v] of Object.entries(node.userData)) {
     if (SKIP_KEYS.has(k) || v === null || typeof v === "object") continue;
     rows.push([k.replace(/_m$/, " (m)").replace(/_/g, " "), fmt(v)]);
