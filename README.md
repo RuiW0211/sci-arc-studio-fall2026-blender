@@ -12,7 +12,8 @@ Live site: https://ruiw0211.github.io/sci-arc-studio-fall2026/
 
 | Folder | Contents |
 |---|---|
-| `web/` | The public website (GitHub Pages serves this folder). `lidar_preview.html` is the LiDAR viewer. |
+| `web/` | The public website (GitHub Pages serves this folder). `viewer.html` is the site model viewer, `lidar_preview.html` the LiDAR viewer. |
+| `web/research/` | The Y-1 research database: `data.json` holds every finding (sources, status, confidence); `index.html` searches and filters it. Link to one finding with `research/#<id>`. |
 | `site-model/scripts/` | Data pipeline (Python) and Blender build scripts for the 3D site model. |
 | `site-model/data/` | Small processed inputs the Blender scripts need (terrain grids, building tiers, landmarks, trees). |
 | `site-model/exports/` | `context.glb`, the site model for the web (Draco-compressed). |
