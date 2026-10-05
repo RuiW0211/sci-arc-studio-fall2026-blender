@@ -2,7 +2,7 @@
   "_comment": "Viewer settings. Layers come from the GLB (extras.layer = Blender collection); this file only gives display names, order, default visibility and the Linked LiDAR colour. Unknown layers still appear under their own name (grey in Linked LiDAR). Camera values are three.js coordinates: x = east, y = up (m, NAVD88), z = -north, from the site origin E 384580 / N 3768520.",
   "model": "assets/context.glb",
   "lidar": { "points": "data/lidar_points.bin", "meta": "data/lidar_points.json", "size": 0.25 },
-  "linked": { "_comment": "LiDAR · Linked: points coloured by the layer colours below, from the Coolors trending palette F0EAD2 · DDE5B6 · ADC178 · A98467 · 6C584C (Other darkened from Terrain). The clicked object turns the highlight colour unless its layer has \"highlight\": false (Terrain: too large to light up).", "highlight": "#F0E442" },
+  "linked": { "_comment": "LiDAR · Linked: points coloured by the layer colours below, from the Coolors trending palette F0EAD2 · DDE5B6 · ADC178 · A98467 · 6C584C (Other darkened from Terrain). The clicked object turns the highlight colour unless its layer has \"highlight\": false (Terrain: too large to light up).", "highlight": "#FF3EA5" },
   "_modes": "mesh = Model · Mesh, points = Model · Points, lidar = LiDAR · Raw, linked = LiDAR · Linked",
   "defaultMode": "mesh",
   "layers": {
