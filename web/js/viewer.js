@@ -75,7 +75,8 @@ function applyVisibility() {
     const showMesh = Boolean(L.visible && (mode === "mesh" || L.cfg.overlay));
     for (const o of L.objects) o.visible = showMesh;
     if (L.points) L.points.visible = Boolean(L.visible && mode === "points" && !L.cfg.overlay);
-    if (L.lidar) L.lidar.visible = Boolean(L.visible && mode === "lidar");
+    // LiDAR is the raw reference: always all points. Linked LiDAR follows the layer toggles.
+    if (L.lidar) L.lidar.visible = mode === "lidar" || Boolean(L.visible && mode === "linked");
   }
 }
 
@@ -84,7 +85,8 @@ for (const L of ordered) {
   const row = document.createElement("label");
   row.className = "layer";
   const n = L.objects.length ? L.objects.length : "LiDAR";
-  row.innerHTML = `<input type="checkbox" ${L.visible ? "checked" : ""}> ${L.cfg.label || L.name} <span class="n">${n}</span>`;
+  const sw = L.cfg.color ? `<i class="sw" style="background:${L.cfg.color}"></i>` : "";  // legend, Linked LiDAR only
+  row.innerHTML = `<input type="checkbox" ${L.visible ? "checked" : ""}> ${sw}${L.cfg.label || L.name} <span class="n">${n}</span>`;
   row.querySelector("input").onchange = (e) => { L.visible = e.target.checked; applyVisibility(); };
   $("#layers").append(row);
 }
@@ -231,34 +233,41 @@ async function loadLidar() {
   paintLidar("height");
   status("");
 }
-function hashColor(k) {  // stable, well-spread colour per object id
-  const h = ((k * 0.61803398875) % 1 + 1) % 1;
-  return new THREE.Color().setHSL(h, 0.62, 0.55);
-}
 const RAMP = [[0.18, 0.2, 0.45], [0.13, 0.55, 0.6], [0.55, 0.78, 0.35], [0.98, 0.85, 0.3], [0.85, 0.35, 0.2]];
 function ramp(t) {
   t = Math.min(Math.max(t, 0), 1) * (RAMP.length - 1);
   const k = Math.min(Math.floor(t), RAMP.length - 2), f = t - k, a = RAMP[k], b = RAMP[k + 1];
   return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
 }
-const HILITE = [1.0, 0.42, 0.12];
+// LiDAR mode = the untouched reference: height / class / intensity, every point, no model involvement.
 function paintLidar(how = lidar.how) {
   lidar.how = how;
-  const sel = lidar.selected;
-  const tmp = new THREE.Color();
-  for (const { zs, cls, inten, ob, col, n } of lidar.parts) {
+  for (const { zs, cls, inten, col, n } of lidar.parts) {
     for (let i = 0; i < n; i++) {
       let c;
-      if (ob[i] === sel) c = HILITE;
-      else if (how === "height") c = ramp((zs[i] - 78) / 60);
+      if (how === "height") c = ramp((zs[i] - 78) / 60);
       else if (how === "class") c = cls[i] === 2 ? [0.72, 0.6, 0.42] : zs[i] > 140 ? [0.55, 0.58, 0.62] : [0.3, 0.52, 0.36];
-      else if (how === "object") { tmp.copy(lidar.objLayers[ob[i]] === "_other" ? new THREE.Color(0.35, 0.35, 0.35) : hashColor(ob[i])); c = [tmp.r, tmp.g, tmp.b]; }
       else { const v = 0.15 + (inten[i] / 255) * 0.85; c = [v, v, v]; }
       col.set(c, 3 * i);
     }
   }
   for (const p of lidarGroup.children) p.geometry.attributes.color.needsUpdate = true;
   document.querySelectorAll("#lidarColors button").forEach((b) => b.classList.toggle("on", b.dataset.c === how));
+}
+
+// Linked LiDAR = the same points tied to the model: one colour per layer (config.json), clicked object highlighted.
+const HILITE = new THREE.Color(cfg.linked?.highlight ?? "#22d3ee");
+const layerColor = (name) => new THREE.Color(cfg.layers[name]?.color ?? "#888888");
+function paintLinked() {
+  const sel = lidar.selected;
+  for (const part of lidar.parts) {
+    const base = layerColor(part.name), { ob, col, n } = part;
+    for (let i = 0; i < n; i++) {
+      const c = ob[i] === sel ? HILITE : base;
+      col[3 * i] = c.r; col[3 * i + 1] = c.g; col[3 * i + 2] = c.b;
+    }
+  }
+  for (const p of lidarGroup.children) p.geometry.attributes.color.needsUpdate = true;
 }
 document.querySelectorAll("#lidarColors button").forEach((b) => (b.onclick = () => paintLidar(b.dataset.c)));
 
@@ -282,21 +291,27 @@ async function setMode(m) {
   busy = true;
   document.querySelectorAll("#modes button").forEach((b) => (b.disabled = true));
   if (m === "points" && !pointsGroup.children.length) { await buildModelPoints(); paintModelPoints("material"); }
-  if (m === "lidar" && !lidar) await loadLidar();
+  const usesLidar = m === "lidar" || m === "linked";
+  if (usesLidar && !lidar) await loadLidar();
+  const prev = mode;
   mode = m;
+  if (m === "lidar") paintLidar();
+  if (m === "linked") paintLinked();
+  if (prev !== m) hideInfo();
   applyVisibility();
   document.querySelectorAll("#modes button").forEach((b) => { b.disabled = false; b.classList.toggle("on", b.dataset.mode === m); });
   $("#ptsOpts").hidden = m === "mesh";
   $("#lidarOpts").hidden = m !== "lidar";
   $("#ptsColorOpts").hidden = m !== "points";
-  const mat = m === "lidar" ? lidar.material : pointsGroup.userData.material;
+  document.body.classList.toggle("linked", m === "linked");
+  $("#rawNote").hidden = m !== "lidar";
+  const mat = usesLidar ? lidar.material : pointsGroup.userData.material;
   if (mat) $("#ptSize").value = mat.size;
-  if (m !== "mesh") hideInfo();
   busy = false;
 }
 document.querySelectorAll("#modes button").forEach((b) => (b.onclick = () => setMode(b.dataset.mode)));
 $("#ptSize").oninput = (e) => {
-  const mat = mode === "lidar" ? lidar?.material : pointsGroup.userData.material;
+  const mat = mode === "lidar" || mode === "linked" ? lidar?.material : pointsGroup.userData.material;
   if (mat) mat.size = +e.target.value;
 };
 
@@ -320,10 +335,10 @@ const SKIP_KEYS = new Set(["layer", "name", "scatter5"]);
 let down = null;
 renderer.domElement.addEventListener("pointerdown", (e) => (down = [e.clientX, e.clientY]));
 renderer.domElement.addEventListener("pointerup", (e) => {
-  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4 || mode === "points") return;
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4 || mode === "points" || mode === "lidar") return;
   ray.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
   const visible = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
-  if (mode === "lidar") return pickLidar();
+  if (mode === "linked") return pickLidar();
   const hit = ray.intersectObject(model, true).find((h) => visible(h.object));
   if (!hit) return hideInfo();
   let node = hit.object;
@@ -334,12 +349,12 @@ renderer.domElement.addEventListener("pointerup", (e) => {
   function pickLidar() {
     ray.params.Points.threshold = 0.6;
     const hit = ray.intersectObjects(lidarGroup.children.filter((p) => p.visible), false)[0];
-    if (!hit) { lidar.selected = -1; paintLidar(); return hideInfo(); }
+    if (!hit) { lidar.selected = -1; paintLinked(); return hideInfo(); }
     const id = hit.object.userData.part.ob[hit.index], name = lidar.objNames[id];
     const node = model.getObjectByName(name) || { name: name === "_other" ? "Unassigned LiDAR points" : name,
                                                   userData: { layer: lidar.objLayers[id] } };
     lidar.selected = name === "_other" ? -1 : id;
-    paintLidar();
+    paintLinked();
     showInfo(node, hit.point, [["LiDAR points (shown)", lidar.objCount[id].toLocaleString()]]);
   }
 });
