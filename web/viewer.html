@@ -18,9 +18,16 @@
   h1 { font-size: 15px; margin: 0; font-weight: 650; }
   .sub { color: var(--muted); margin: 2px 0 10px; }
   .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; margin: 12px 0 4px; }
+  #modes { display: grid; gap: 4px; }
+  .grp { display: grid; grid-template-columns: 44px 1fr; align-items: center; }
+  .src { color: var(--muted); font-size: 11px; }
   .seg { display: flex; border: 1px solid var(--line); }
   .seg button { flex: 1; border: 0; border-right: 1px solid var(--line); }
   .seg button:last-child { border-right: 0; }
+  .note { color: var(--muted); font-size: 11px; margin-top: 4px; }
+  .note[hidden], #layersBox[hidden] { display: none; }
+  i.sw { display: none; width: 10px; height: 10px; border-radius: 50%; }
+  body.linked i.sw { display: inline-block; }
   button { font: inherit; background: none; color: var(--fg); border: 1px solid var(--line); padding: 4px 8px; cursor: pointer; }
   button.on { background: var(--accent); color: var(--bg); }
   button:disabled { opacity: .4; cursor: default; }
@@ -46,10 +53,16 @@
   <div class="body">
     <div class="sub">Site model · <a href="./" style="color:inherit">home</a></div>
     <div class="label">Mode</div>
-    <div class="seg" id="modes">
-      <button data-mode="mesh">Mesh</button>
-      <button data-mode="points">Model points</button>
-      <button data-mode="lidar">LiDAR</button>
+    <!-- two sources x two variants: Model (Mesh | Points), LiDAR (Raw | Linked) -->
+    <div id="modes">
+      <div class="grp"><span class="src">Model</span><div class="seg">
+        <button data-mode="mesh" title="Model · Mesh: the Blender model">Mesh</button>
+        <button data-mode="points" title="Model · Points: sampled from the Blender model, follow every edit">Points</button>
+      </div></div>
+      <div class="grp"><span class="src">LiDAR</span><div class="seg">
+        <button data-mode="lidar" title="LiDAR · Raw: USGS 2023 as captured, the untouched reference">Raw</button>
+        <button data-mode="linked" title="LiDAR · Linked: the same points tied to model objects; layers and click apply">Linked</button>
+      </div></div>
     </div>
     <div id="ptsOpts" hidden>
       <div class="label">Point size (m)</div>
@@ -67,14 +80,17 @@
         <button data-c="height">Height</button><button data-c="class">Ground / other</button><button data-c="intensity">Intensity</button>
       </div>
     </div>
-    <div class="label">Layers</div>
-    <div id="layers"></div>
+    <div id="layersBox">
+      <div class="label">Layers</div>
+      <div id="layers"></div>
+    </div>
+    <div id="rawNote" class="note" hidden>Every point as captured, untouched by the model.</div>
     <div class="label">Views</div>
     <div class="row" id="views"></div>
   </div>
 </div>
 <div id="info" class="panel"></div>
-<div id="hint">Drag to orbit · right-drag to pan · scroll to zoom · click an object for details</div>
+<div id="hint">Drag to orbit · right-drag to pan · scroll to zoom · click an object (Model · Mesh) or a point (LiDAR · Linked) for details</div>
 <div id="status">Loading model…</div>
 
 <script type="importmap">

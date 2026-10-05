@@ -11,6 +11,8 @@ from pathlib import Path
 import laspy
 import numpy as np
 
+from lidar_labels import label_points
+
 ROOT = Path(__file__).resolve().parent.parent          # site-model/
 DATA, OUT = ROOT / "data", ROOT.parent / "web" / "data"  # repo-root web/ is what GitHub Pages serves
 OUT.mkdir(parents=True, exist_ok=True)
@@ -33,9 +35,16 @@ rec["y"] = np.round((y[idx] - oy) * 10)
 rec["z"] = np.round((z[idx] - Z_BASE) * 10)
 rec["c"], rec["i"] = cl[idx], it
 rec.tofile(OUT / "lidar_points.bin")
+
+# Extra per-point attributes: one binary channel per attribute, described in the meta "attributes" table.
+# "object" = the Blender object each point belongs to (lidar_labels.py); value -> names[value], layers[value].
+names, layers, labels = label_points(x[idx] - ox, y[idx] - oy, z[idx], cl[idx])
+labels.astype("<u2").tofile(OUT / "lidar_object.bin")
 (OUT / "lidar_points.json").write_text(json.dumps({
     "count": int(len(idx)), "stride": STRIDE, "scale": 0.1, "z_base": Z_BASE, "origin_utm": [ox, oy],
     "z_range": [float(z[idx].min()), float(z[idx].max())], "record_bytes": 8,
+    "attributes": {"object": {"file": "lidar_object.bin", "type": "uint16", "names": names, "layers": layers,
+                              "source": "lidar_labels.py (footprints, crowns and landmark outlines from the model)"}},
     "source": "USGS 3DEP CA_LosAngeles_B23 (2023), tile 11SLT038400376800, public domain"}, indent=1))
 # Y-1 outline for the viewer (draped ring from prep_blender.py, local metres)
 scene = json.loads((DATA / "scene.json").read_text())

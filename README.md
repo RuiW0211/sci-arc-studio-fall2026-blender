@@ -31,7 +31,7 @@ python scripts/prep_moca.py           # MOCA heightfield + pyramid fits
 python scripts/prep_blender.py        # terrain (2 m + 0.5 m patch), buildings, parcels -> data/scene.json
 python scripts/prep_landmarks.py      # Angels Flight, Metro portal
 python scripts/prep_trees.py          # trees from LiDAR canopy
-python scripts/export_lidar_preview.py  # web/data/lidar_points.bin
+python scripts/export_lidar_preview.py  # web/data/lidar_points.bin + lidar_object.bin (labels)
 ```
 
 Then in Blender 5.x, open (or save a file as) `site-model/blender/y1_context.blend` and run, in order,
@@ -47,6 +47,15 @@ blender --background site-model/blender/y1_context.blend --python site-model/scr
 It writes `site-model/exports/context.glb` and tags every object with its collection; the viewer turns
 collections into layer toggles. Put hand-made work in its own collection (e.g. `Design`); the build scripts
 rebuild `Terrain`, `Buildings`, `Y1_Parcel`, `Landmarks`, `Trees` from scratch.
+
+`export_lidar_preview.py` also labels every LiDAR point with the Blender object it belongs to
+(`lidar_labels.py`, using the exported GLB's object names and layers). Run it after `export_glb.py` so
+the labels match the current model. In the viewer the labels drive layer toggles, "Object" colouring and
+click-to-identify in LiDAR mode.
+
+`site-model/experiments/poisson_y1.py` reconstructs a mesh straight from the LiDAR with Poisson, for
+comparison. Airborne LiDAR melts trees into one surface and keeps only roof skins, which is why the pipeline
+models terrain, buildings, trees and landmarks separately.
 
 ## Previewing the website locally
 
