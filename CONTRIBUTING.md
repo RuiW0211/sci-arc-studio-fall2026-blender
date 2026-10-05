@@ -2,7 +2,7 @@
 
 New here? Start with these two guides:
 
-1. **[docs/SETUP.md](docs/SETUP.md)**: install the tools (macOS, with Windows notes), get a GitHub
+1. **[docs/SETUP.md](docs/SETUP.md)**: install the tools (macOS), get a GitHub
    account and access, clone the project, and connect Claude and Blender.
 2. **[docs/WORKFLOW.md](docs/WORKFLOW.md)**: the day-to-day routine: branch, edit, preview, open a pull
    request, discuss, merge.

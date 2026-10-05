@@ -1,8 +1,7 @@
 # Setting up
 
 This guide takes you from nothing to working on the project: editing the website, the 3D site model and
-the data, and proposing changes through pull requests. It is written for **macOS**. Where Windows differs,
-there is a note marked **Windows**.
+the data, and proposing changes through pull requests. It is written for **macOS**.
 
 Set up only as far as you need:
 
@@ -45,8 +44,6 @@ gh --version
 python3 --version
 ```
 
-> **Windows:** install Git for Windows (https://git-scm.com), GitHub CLI (`winget install --id GitHub.cli -e`)
-> and Python 3.12 or later (https://www.python.org). Use `python` wherever this guide says `python3`.
 
 ## 2. GitHub account and access
 
@@ -73,9 +70,6 @@ python3 --version
 
 **Check:** `gh auth status` says **Logged in to github.com account yourname**.
 
-> **Windows:** run `gh auth login` in a standalone PowerShell window (Win+R → `powershell`). Some
-> embedded terminals can't hold the login open. If Git asks which credential helper to use, choose
-> **manager**.
 
 ## 3. Get the project
 
@@ -150,7 +144,6 @@ seconds:
 **Check:** it ends with `exported 690 objects`, or a similar number, and
 `site-model/blender/y1_context.blend` now exists. Open that file in Blender.
 
-> **Windows:** Blender is usually at `"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe"`.
 
 ## 7. Let Claude work inside Blender (Blender MCP)
 
@@ -195,7 +188,6 @@ The order of the pipeline scripts is in the [README](../README.md#rebuilding-the
 
 **Check:** `fetch_lidar.py` ends with `saved …laz` or `already there`.
 
-> **Windows:** `python -m venv .venv` then `.venv\Scripts\activate`.
 
 ---
 

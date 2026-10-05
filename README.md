@@ -5,7 +5,7 @@ NW corner of 4th and Hill Streets, Downtown Los Angeles.
 
 Live site: https://ruiw0211.github.io/sci-arc-studio-fall2026/
 
-**Join the project:** [docs/SETUP.md](docs/SETUP.md) (install, macOS and Windows) and
+**Join the project:** [docs/SETUP.md](docs/SETUP.md) (install on macOS) and
 [docs/WORKFLOW.md](docs/WORKFLOW.md) (branch → pull request → discuss → merge).
 
 ## What is here
