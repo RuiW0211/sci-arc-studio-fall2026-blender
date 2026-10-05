@@ -94,7 +94,16 @@
 
 ## 9. 工程化
 
-- [ ] ⭐⭐⭐ **建 git repo**，加 `README.md` 和 `CLAUDE.md`，写清朋友协作的规则：开分支、发 PR、不直接推到 main。
+**Blender 更新 → 网页同步（做 Site model viewer 时一起完成，之后要定期检查）**
+- [ ] ⭐⭐⭐ **手动建模放在独立的 collection 里**：`Terrain`、`Buildings`、`Y1_Parcel`、`Landmarks`、`Trees` 是脚本生成的，重新运行 build 脚本时会被清空重建，在里面手改的东西会丢失。设计方案、手动精修的建筑放在新的 collection 里（例如 `Design`），脚本永远不碰它们。
+  - 检查：每次重新运行 build 脚本前，确认手动内容不在上面这 5 个 collection 里。
+- [ ] ⭐⭐⭐ **一键导出脚本**（`site-model/scripts/export_glb.py`，在 Blender 里运行）：把脚本生成的 collection 加上 `Design` 等手动 collection 一起导出到 `site-model/exports/context.glb`，导出设置固定（Draco 压缩、+Y Up、带 extras 属性），不用每次手动选。
+  - 检查：新增的手动 collection 要能被导出；导出后在本地查看器里核对。
+- [ ] ⭐⭐⭐ **GLB 只放一个位置**：GLB 存在 `site-model/exports/`，但 GitHub Pages 只发布 `web/`。修改 `.github/workflows/pages.yml`，部署时自动把 `site-model/exports/*.glb` 复制进发布的网页里，repo 里只保留一份 GLB。
+  - 检查：合并 PR 后，线上网页加载的是最新的 GLB（看浏览器 Network 面板里 GLB 的请求和大小）。
+
+- [x] ⭐⭐⭐ **建 git repo**，加 `README.md` 和 `CLAUDE.md`，写清朋友协作的规则：开分支、发 PR、不直接推到 main。（2026-10-05 完成：`RuiW0211/sci-arc-studio-fall2026`）
+- [ ] ⭐⭐⭐ 邀请组员之前，在 GitHub 上打开 main 分支保护（必须通过 PR 才能合并）。
 - [ ] ⭐⭐ **一键重建脚本**：依次运行 `fetch_data → lidar_dsm → lidar_tiers → prep_moca → prep_blender → prep_landmarks → prep_trees`，然后在 Blender 里运行 `build_blender → build_landmarks → build_trees`，再导出 GLB。
 - [ ] ⭐⭐ `requirements.txt`：laspy[lazrs]、pymupdf、rasterio、shapely、pyproj、scipy、scikit-learn。laspy 和 pymupdf 目前是用 `pip --user` 装的。
 - [ ] ⭐⭐ **大文件处理**：LAZ（67 MB）、各种 PDF 不放进 git，写一个下载脚本代替。GLB 目前 1.25 MB，可以直接放进 repo。

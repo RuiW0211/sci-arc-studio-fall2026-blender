@@ -35,9 +35,27 @@ python scripts/export_lidar_preview.py  # web/data/lidar_points.bin
 ```
 
 Then in Blender 5.x, open (or save a file as) `site-model/blender/y1_context.blend` and run, in order,
-`build_blender.py`, `build_landmarks.py`, `build_trees.py` (Text Editor ▸ Run Script), and export the
-`Terrain`, `Buildings`, `Y1_Parcel`, `Landmarks`, `Trees` collections as GLB to `site-model/exports/context.glb`.
-The `.blend` itself is not committed; it is rebuilt from these scripts.
+`build_blender.py`, `build_landmarks.py`, `build_trees.py` (Text Editor ▸ Run Script). The `.blend` itself
+is not committed; it is rebuilt from these scripts.
+
+**Exporting for the web (one click):** run `site-model/scripts/export_glb.py` in Blender, or headless:
+
+```
+blender --background site-model/blender/y1_context.blend --python site-model/scripts/export_glb.py
+```
+
+It writes `site-model/exports/context.glb` and tags every object with its collection; the viewer turns
+collections into layer toggles. Put hand-made work in its own collection (e.g. `Design`); the build scripts
+rebuild `Terrain`, `Buildings`, `Y1_Parcel`, `Landmarks`, `Trees` from scratch.
+
+## Previewing the website locally
+
+```
+python web/serve.py
+```
+
+Then open http://localhost:8766/ . `serve.py` serves `site-model/exports/` under `/assets/`, exactly as
+the Pages deploy does, so the viewer (`web/viewer.html`) loads the same model locally and online.
 
 ## Data sources and licences
 
