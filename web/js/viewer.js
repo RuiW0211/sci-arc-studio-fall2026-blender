@@ -72,7 +72,8 @@ let lidar = null;
 function applyVisibility() {
   for (const L of ordered) {
     // strict booleans: three.js only skips objects whose visible === false (undefined still renders)
-    const showMesh = Boolean(L.visible && (mode === "mesh" || L.cfg.overlay));
+    // the Y-1 outline overlay stays on in the raw LiDAR, where there are no toggles
+    const showMesh = Boolean((L.visible || (mode === "lidar" && L.cfg.overlay)) && (mode === "mesh" || L.cfg.overlay));
     for (const o of L.objects) o.visible = showMesh;
     if (L.points) L.points.visible = Boolean(L.visible && mode === "points" && !L.cfg.overlay);
     // LiDAR is the raw reference: always all points. Linked LiDAR follows the layer toggles.
@@ -305,6 +306,7 @@ async function setMode(m) {
   $("#ptsColorOpts").hidden = m !== "points";
   document.body.classList.toggle("linked", m === "linked");
   $("#rawNote").hidden = m !== "lidar";
+  $("#layersBox").hidden = m === "lidar";  // the raw reference has no layers
   const mat = usesLidar ? lidar.material : pointsGroup.userData.material;
   if (mat) $("#ptSize").value = mat.size;
   busy = false;
@@ -390,4 +392,12 @@ renderer.setAnimationLoop((now) => {
   controls.update();
   renderer.render(scene, camera);
 });
-window.__viewer = { layers, get mode() { return mode; }, setMode, pointsGroup, get lidar() { return lidar; } };
+window.__viewer = {
+  layers, get mode() { return mode; }, setMode, pointsGroup, get lidar() { return lidar; },
+  // debugging / palette trials: setLayerColors({ Terrain: "#..." }, "#highlight")
+  setLayerColors(map, highlight) {
+    for (const [k, v] of Object.entries(map)) (cfg.layers[k] ||= {}).color = v;
+    if (highlight) HILITE.set(highlight);
+    if (lidar && mode === "linked") paintLinked();
+  },
+};
