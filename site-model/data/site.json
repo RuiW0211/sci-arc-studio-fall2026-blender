@@ -1,0 +1,24 @@
+{
+  "crs": "EPSG:26911",
+  "units": "m",
+  "vertical_datum": "NAVD88 (m)",
+  "origin": [
+    384580,
+    3768520
+  ],
+  "extent": [
+    384180,
+    3768120,
+    384980,
+    3768920
+  ],
+  "center_latlon": [
+    34.05099185,
+    -118.25055878
+  ],
+  "sources": {
+    "dem": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage",
+    "buildings": "https://public.gis.lacounty.gov/public/rest/services/LACounty_Dynamic/LARIAC_Buildings_2020/MapServer/0/query",
+    "parcels": "https://public.gis.lacounty.gov/public/rest/services/LACounty_Cache/LACounty_Parcel/MapServer/0/query"
+  }
+}

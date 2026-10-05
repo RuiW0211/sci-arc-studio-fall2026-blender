@@ -1,0 +1,11 @@
+# Python 3.10+ for the data pipeline (Blender scripts use Blender's bundled Python)
+numpy
+scipy
+scikit-learn
+rasterio
+shapely>=2.0
+pyproj
+requests
+laspy[lazrs]
+pymupdf
+pillow

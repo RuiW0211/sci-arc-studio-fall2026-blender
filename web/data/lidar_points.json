@@ -1,0 +1,16 @@
+{
+ "count": 3306957,
+ "stride": 3,
+ "scale": 0.1,
+ "z_base": 60.0,
+ "origin_utm": [
+  384580,
+  3768520
+ ],
+ "z_range": [
+  75.74,
+  402.63
+ ],
+ "record_bytes": 8,
+ "source": "USGS 3DEP CA_LosAngeles_B23 (2023), tile 11SLT038400376800, public domain"
+}

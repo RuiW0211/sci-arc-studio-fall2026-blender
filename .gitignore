@@ -1,0 +1,19 @@
+# --- never public: copyrighted references and imagery-based checks ---
+site-model/references/
+site-model/checks/
+
+# --- large or regenerable ---
+# USGS LAZ tiles (67 MB+); download with the URL in CLAUDE.md
+site-model/data/lidar/
+# Blender files are binary and unmergeable; they are rebuilt by the build_*.py scripts
+*.blend
+*.blend1
+*.blend@
+
+# --- tooling ---
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+Thumbs.db
+desktop.ini
