@@ -297,8 +297,8 @@ async function setMode(m) {
   const prev = mode;
   mode = m;
   if (m === "lidar") paintLidar();
+  if (prev !== m) hideInfo();  // also clears any highlight
   if (m === "linked") paintLinked();
-  if (prev !== m) hideInfo();
   applyVisibility();
   document.querySelectorAll("#modes button").forEach((b) => { b.disabled = false; b.classList.toggle("on", b.dataset.mode === m); });
   $("#ptsOpts").hidden = m === "mesh";
@@ -355,7 +355,9 @@ renderer.domElement.addEventListener("pointerup", (e) => {
     const id = hit.object.userData.part.ob[hit.index], name = lidar.objNames[id];
     const node = model.getObjectByName(name) || { name: name === "_other" ? "Unassigned LiDAR points" : name,
                                                   userData: { layer: lidar.objLayers[id] } };
-    lidar.selected = name === "_other" ? -1 : id;
+    // layers with "highlight": false in config.json (e.g. Terrain) show their info but are not lit
+    const lit = name !== "_other" && cfg.layers[lidar.objLayers[id]]?.highlight !== false;
+    lidar.selected = lit ? id : -1;
     paintLinked();
     showInfo(node, hit.point, [["LiDAR points (shown)", lidar.objCount[id].toLocaleString()]]);
   }
@@ -372,7 +374,11 @@ function showInfo(node, point, extra = []) {
   $("#info").innerHTML = `<h2>${esc(node.name)}</h2><table>${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>`;
   $("#info").style.display = "block";
 }
-function hideInfo() { $("#info").style.display = "none"; }
+function hideInfo() {
+  $("#info").style.display = "none";
+  // the highlight belongs to the info panel: never leave an object lit without its explanation
+  if (lidar && lidar.selected !== -1) { lidar.selected = -1; if (mode === "linked") paintLinked(); }
+}
 
 // ---------- misc ui ----------
 function collapse(on) { $("#ui").classList.toggle("collapsed", on); $("#toggle").textContent = on ? "+" : "–"; }
