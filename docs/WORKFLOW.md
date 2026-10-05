@@ -93,10 +93,18 @@ git commit -m "Lower terrace 2 by one storey, per review"
 git push
 ```
 
-## 7. Merge (owner)
+## 7. Approve and merge (owner)
 
-Once everyone agrees, the owner clicks **Merge pull request** on the PR. GitHub then publishes `main` to
-the live site within a few minutes. The PR page, with its discussion and every commit, stays in the
+`main` is protected. A PR can only merge once the owner (the code owner in `.github/CODEOWNERS`) has
+approved it, and pushing new commits clears an earlier approval. Once everyone agrees:
+
+1. **Someone else's PR:** the owner opens **Files changed → Review changes → Approve → Submit review**,
+   then clicks **Merge pull request**.
+2. **The owner's own PR:** GitHub doesn't let you approve your own PR, so the owner ticks **Merge
+   without waiting for requirements to be met (bypass rules)** and then merges.
+
+Nobody, the owner included, can push to `main` directly, force-push it or delete it. GitHub then
+publishes `main` to the live site within a few minutes. The PR page, with its discussion and every commit, stays in the
 history permanently.
 
 ## 8. Tidy up
