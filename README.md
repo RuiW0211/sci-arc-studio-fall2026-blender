@@ -5,6 +5,9 @@ NW corner of 4th and Hill Streets, Downtown Los Angeles.
 
 Live site: https://ruiw0211.github.io/sci-arc-studio-fall2026/
 
+**Join the project:** [docs/SETUP.md](docs/SETUP.md) (install, macOS and Windows) and
+[docs/WORKFLOW.md](docs/WORKFLOW.md) (branch → pull request → discuss → merge).
+
 ## What is here
 
 | Folder | Contents |
@@ -20,11 +23,12 @@ All geometry shares one frame: **EPSG:26911 (NAD83 / UTM 11N), metres, NAVD88 he
 
 ## Rebuilding the site model
 
-Python pipeline (run from `site-model/`, Python 3.10+, `pip install -r requirements.txt`):
+Python pipeline (run from `site-model/`, Python 3.10+, `pip install -r requirements.txt`; on macOS type
+`python3` for `python`):
 
 ```
 python scripts/fetch_data.py          # DEM, LA County buildings + parcels
-# download the LiDAR tile into data/lidar/ (see BACKLOG / CLAUDE.md for the URL)
+python scripts/fetch_lidar.py         # 2023 USGS LiDAR tile -> data/lidar/ (67 MB, not in git)
 python scripts/lidar_dsm.py           # roof DSM from LiDAR
 python scripts/lidar_tiers.py         # split buildings into height tiers
 python scripts/prep_moca.py           # MOCA heightfield + pyramid fits
@@ -34,9 +38,15 @@ python scripts/prep_trees.py          # trees from LiDAR canopy
 python scripts/export_lidar_preview.py  # web/data/lidar_points.bin + lidar_object.bin (labels)
 ```
 
-Then in Blender 5.x, open (or save a file as) `site-model/blender/y1_context.blend` and run, in order,
-`build_blender.py`, `build_landmarks.py`, `build_trees.py` (Text Editor ▸ Run Script). The `.blend` itself
-is not committed; it is rebuilt from these scripts.
+Then build the Blender file. `build_all_blender.py` runs `build_blender.py`, `build_landmarks.py` and
+`build_trees.py` in an empty scene, saves `site-model/blender/y1_context.blend` and exports the GLB (about
+20 s). The `.blend` itself is not committed. Don't run this over a `.blend` that holds your own collections.
+
+```
+blender --background --factory-startup --python site-model/scripts/build_all_blender.py
+```
+
+(`blender` is `/Applications/Blender.app/Contents/MacOS/Blender` on macOS and `blender.exe` on Windows.)
 
 **Exporting for the web (one click):** run `site-model/scripts/export_glb.py` in Blender, or headless:
 
@@ -76,4 +86,5 @@ the Pages deploy does, so the viewer (`web/viewer.html`) loads the same model lo
 
 ## Working together
 
-Branch, commit, open a pull request; `main` is reviewed and protected. Details in `CLAUDE.md`.
+Branch, commit, open a pull request; the owner merges after discussion. See [CONTRIBUTING.md](CONTRIBUTING.md),
+[docs/WORKFLOW.md](docs/WORKFLOW.md) and `CLAUDE.md`.
