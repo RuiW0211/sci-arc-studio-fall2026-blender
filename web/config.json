@@ -2,17 +2,17 @@
   "_comment": "Viewer settings. Layers come from the GLB (extras.layer = Blender collection); this file only gives display names, order, default visibility and the Linked LiDAR colour. Unknown layers still appear under their own name (grey in Linked LiDAR). Camera values are three.js coordinates: x = east, y = up (m, NAVD88), z = -north, from the site origin E 384580 / N 3768520.",
   "model": "assets/context.glb",
   "lidar": { "points": "data/lidar_points.bin", "meta": "data/lidar_points.json", "size": 0.25 },
-  "linked": { "_comment": "LiDAR · Linked: points coloured by the layer colours below (Okabe-Ito, colour-blind safe); the clicked object turns the highlight colour unless its layer has \"highlight\": false (Terrain: too large to light up).", "highlight": "#F0E442" },
+  "linked": { "_comment": "LiDAR · Linked: points coloured by the layer colours below (Okabe-Ito hues, colour-blind safe; Terrain is a neutral warm grey so the yellow highlight never blends with it); the clicked object turns the highlight colour unless its layer has \"highlight\": false (Terrain: too large to light up).", "highlight": "#F0E442" },
   "_modes": "mesh = Model · Mesh, points = Model · Points, lidar = LiDAR · Raw, linked = LiDAR · Linked",
   "defaultMode": "mesh",
   "layers": {
-    "Terrain":   { "label": "Terrain",            "order": 1, "visible": true, "color": "#C9B27C", "highlight": false },
+    "Terrain":   { "label": "Terrain",            "order": 1, "visible": true, "color": "#8F8A80", "highlight": false },
     "Buildings": { "label": "Buildings",          "order": 2, "visible": true, "color": "#56B4E9" },
     "Y1_Parcel": { "label": "Y-1 parcel",         "order": 3, "visible": true, "overlay": true },
     "Landmarks": { "label": "Landmarks",          "order": 4, "visible": true, "color": "#D55E00" },
     "Trees":     { "label": "Trees",              "order": 5, "visible": true, "color": "#009E73" },
     "Design":    { "label": "Design",             "order": 6, "visible": false, "color": "#CC79A7" },
-    "_other":    { "label": "Other (LiDAR only)", "order": 9, "visible": true, "color": "#5C5C5C" }
+    "_other":    { "label": "Other (LiDAR only)", "order": 9, "visible": true, "color": "#3F3F3F" }
   },
   "modelPoints": {
     "_comment": "Point budget is split by surface area x layer weight x distance falloff (1 / (1 + (d / falloff)^2), d = distance of each object from the site origin), so points gather around Y-1.",
