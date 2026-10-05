@@ -71,7 +71,8 @@
   1. **Model · Mesh**：Blender 模型；
   2. **Model · Points**：网页加载时从同一份 GLB 实时撒点生成，mesh 一改就自动同步；
   3. **LiDAR · Raw**：2023 年 USGS 实测点云，**保持未经处理的原始参照**。只有高度、分类、强度三种着色，没有 Layers 面板，点击也不识别物体；
-  4. **LiDAR · Linked**：同一批 LiDAR 点贴上 Blender 物体标签，按图层统一着色，图层开关生效，点击识别物体并高亮。配色是 **Okabe-Ito**（色盲友好）：建筑 `#56B4E9`、树 `#009E73`、Landmarks `#D55E00`、Design `#CC79A7`，高亮 `#F0E442`。地形用中性暖灰 `#8F8A80`，原来的沙黄和黄色高亮太接近，2026-10-05 换掉；其他调暗到 `#3F3F3F`。点地形只显示信息、不高亮（`"highlight": false`）。颜色在 `web/config.json` 里改。
+  4. **LiDAR · Linked**：同一批 LiDAR 点贴上 Blender 物体标签，按图层统一着色，图层开关生效，点击识别物体并高亮。配色（2026-10-05 由 Rui 选定）来自 Coolors 的流行配色 `F0EAD2 · DDE5B6 · ADC178 · A98467 · 6C584C`：地形深褐 `#6C584C`、建筑奶油 `#F0EAD2`、树橄榄绿 `#ADC178`、Landmarks 浅褐 `#A98467`、Design 浅绿 `#DDE5B6`。其他 `#3A302A` 是从地形色调暗得来的，不在原配色里。高亮改为品红 `#FF3EA5`（Rui 选定）。之前的黄色 `#F0E442` 和橄榄绿的树同属黄绿色系；试过亮青蓝 `#3FC8FF` 和珊瑚红 `#FF6B4A` 后，选了品红。点地形只显示信息、不高亮（`"highlight": false`）。颜色在 `web/config.json` 里改。
+  - 已知取舍：Landmarks 的浅褐不如之前的朱红醒目，这套配色也没有专门做色盲验证。之前用过的 Okabe-Ito（色盲友好）色值留作备选：地形 `#8F8A80`、建筑 `#56B4E9`、树 `#009E73`、Landmarks `#D55E00`、Design `#CC79A7`、其他 `#3F3F3F`。
   - 以后“按物体替换”的功能都做在 Linked 里，Raw 始终保持原样。代码里的模式 ID 仍然是 `mesh / points / lidar / linked`。
 - 目标（以后优化成两种模式）：
   1. **较写实的 Blender mesh**：地形贴 NAIP 航拍图，PBR 材质，光照烘焙；
