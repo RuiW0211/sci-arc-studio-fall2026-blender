@@ -172,8 +172,8 @@ website automatically.
 
 ## 8. Data pipeline (optional)
 
-Only needed to change how the terrain, buildings, trees or LiDAR labels are computed. The processed
-results are already in `site-model/data/`.
+Only needed to change how the terrain, buildings, trees, LiDAR labels or the modeled population are
+computed. The processed results are already in `site-model/data/` and `web/data/`.
 
 ```bash
 cd ~/GitHub/sci-arc-studio-fall2026
@@ -187,6 +187,10 @@ The order of the pipeline scripts is in the [README](../README.md#rebuilding-the
 `source .venv/bin/activate` again in each new Terminal window.
 
 **Check:** `fetch_lidar.py` ends with `saved …laz` or `already there`.
+
+To change the population layer, edit `site-model/data/population/assumptions.json`, then run
+`python3 site-model/scripts/prep_population.py` (about 30 s). It prints how many people are on site at
+several hours; check those against the previous run before you open a PR.
 
 
 ---

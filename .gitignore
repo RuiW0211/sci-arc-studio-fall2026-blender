@@ -20,3 +20,5 @@ __pycache__/
 .DS_Store
 Thumbs.db
 desktop.ini
+# population inputs: raw downloads (LODES, ACS summary files, NHTS) are cached here, regenerable
+site-model/data/population/raw/
