@@ -331,14 +331,33 @@ for (const v of cfg.views) {
   $("#views").append(b);
 }
 
+// ---------- population: a modeled day, one point per person (js/population.js), loaded on first use ----------
+let pop = null;
+$("#popOn").onchange = async (e) => {
+  const on = e.target.checked;
+  if (on && !pop) {
+    e.target.disabled = true;
+    status("Loading population…");
+    const { createPopulation } = await import("./population.js");
+    pop = await createPopulation({ cfg, scene, camera, renderer, layers, y1Url: cfg.population.y1,
+      onInfo: (html) => { $("#info").innerHTML = html; $("#info").style.display = "block"; } });
+    status("");
+    e.target.disabled = false;
+  }
+  $("#popBox").hidden = !on;
+  pop?.setVisible(on);
+};
+
 // ---------- click for details (mesh mode) ----------
 const ray = new THREE.Raycaster();
 const SKIP_KEYS = new Set(["layer", "name", "scatter5"]);
 let down = null;
 renderer.domElement.addEventListener("pointerdown", (e) => (down = [e.clientX, e.clientY]));
 renderer.domElement.addEventListener("pointerup", (e) => {
-  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4 || mode === "points" || mode === "lidar") return;
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4) return;
   ray.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
+  if (pop?.pick(ray)) return;  // a person: their modeled day
+  if (mode === "points" || mode === "lidar") return;
   const visible = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
   if (mode === "linked") return pickLidar();
   const hit = ray.intersectObject(model, true).find((h) => visible(h.object));
@@ -376,6 +395,7 @@ function showInfo(node, point, extra = []) {
 }
 function hideInfo() {
   $("#info").style.display = "none";
+  pop?.clearSelection();
   // the highlight belongs to the info panel: never leave an object lit without its explanation
   if (lidar && lidar.selected !== -1) { lidar.selected = -1; if (mode === "linked") paintLinked(); }
 }
@@ -396,10 +416,11 @@ renderer.setAnimationLoop((now) => {
     if (t === 1) tween = null;
   }
   controls.update();
+  pop?.tick(now);
   renderer.render(scene, camera);
 });
 window.__viewer = {
-  layers, get mode() { return mode; }, setMode, pointsGroup, get lidar() { return lidar; },
+  layers, get mode() { return mode; }, setMode, pointsGroup, get lidar() { return lidar; }, get population() { return pop; },
   // debugging / palette trials: setLayerColors({ Terrain: "#..." }, "#highlight")
   setLayerColors(map, highlight) {
     for (const [k, v] of Object.entries(map)) (cfg.layers[k] ||= {}).color = v;

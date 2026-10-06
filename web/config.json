@@ -19,6 +19,13 @@
     "budget": 1500000, "size": 0.2, "falloff": 220,
     "layerWeight": { "Terrain": 1.0, "Buildings": 0.25, "Landmarks": 6, "Trees": 4 }
   },
+  "population": {
+    "_comment": "Modeled day/night population (site-model/scripts/prep_population.py): one point per person, size in metres. start = clock at load (hours), speed = simulated seconds per real second. routeColor / neon / neonStrength: the selected person's light trail (neonStrength scales its opacity).",
+    "meta": "data/population.json", "y1": "data/y1_parcel.json",
+    "size": 0.7, "start": 8.5, "speed": 300,
+    "routeColor": "#00E5FF", "neon": true, "neonStrength": 1,
+    "colors": { "resident": "#3A86FF", "worker": "#FB8500", "hotel": "#8338EC", "visitor": "#06A77D" }
+  },
   "views": [
     { "name": "Overview",           "position": [260, 260, 300],      "target": [0, 100, 0] },
     { "name": "4th & Hill",         "position": [24, 88.2, 80],       "target": [-15, 100, -5] },
