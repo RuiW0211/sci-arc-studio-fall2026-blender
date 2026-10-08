@@ -1,4 +1,4 @@
-# Python 3.10+ for the data pipeline (Blender scripts use Blender's bundled Python)
+# Python 3.10+ for the data pipelines (site-model/scripts/ and site-model/houdini/tools/); Houdini and Blender use their own Python
 numpy
 scipy
 scikit-learn
@@ -7,5 +7,6 @@ shapely>=2.0
 pyproj
 requests
 laspy[lazrs]
+pandas
 pymupdf
 pillow

@@ -28,6 +28,8 @@ jobs:
         run: |
           mkdir -p web/assets
           cp site-model/exports/*.glb web/assets/
+          # the list of GLB files (context + design_<name>.glb), read by the viewer
+          python3 -c "import json, pathlib; print(json.dumps(sorted(p.name for p in pathlib.Path('web/assets').glob('*.glb'))))" > web/assets/models.json
           rm -f web/serve.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

@@ -37,21 +37,22 @@ Use one branch per topic. A small PR is easier to discuss than a big one.
 highlight colour and camera views all live in `config.json`. Preview with `python3 web/serve.py` and
 reload the browser after each edit.
 
-**3D model** (Blender):
+**3D model** (Houdini): your design, against the shared site.
 
-1. Open `site-model/blender/y1_context.blend`. If you don't have it yet, build it first; see
-   [SETUP §6](SETUP.md#6-blender).
-2. Model in **your own collection**: `Design`, `Option_A`, `Clark_Terraces`, and so on. Never put
-   hand-made work in `Terrain`, `Buildings`, `Y1_Parcel`, `Landmarks` or `Trees`; the scripts rebuild
-   those from scratch.
-3. Export: in Blender's Text Editor open `site-model/scripts/export_glb.py` and click **Run Script**. You
-   can also ask Claude to "export the GLB". This writes `site-model/exports/context.glb`.
-4. Preview with `python3 web/serve.py`. Your new collection appears as a layer toggle by itself. To give
-   it a nicer name, an order or a colour, add an entry under `"layers"` in `web/config.json`.
-5. Save the `.blend`. It is **not** stored in git, so keep your own backup copy of it.
+1. Open your design scene `site-model/houdini/designs/<yourname>.hipnc`. If you don't have it yet, make it first; see
+   [SETUP §6](SETUP.md#6-houdini).
+2. Model inside `/obj/Design_<yourname>`, wired into **your_geometry**. `Site_context` is the shared site model:
+   look, don't edit (it is not exported). Give parts a primitive attribute `name` to make them separate clickable
+   objects, and `layer` for your own layer toggles (for example `Clark_OptionA`).
+3. Export: in `/out`, select **export_design** and click **Render**, or ask Claude to "export my design". This writes
+   `site-model/exports/design_<yourname>.glb`.
+4. Preview with `python3 web/serve.py`. Your file loads on top of the site by itself, with its own layer toggles, in
+   Point cloud and Mesh mode. To give a layer a nicer name or colour, add an entry under `"layers"` in
+   `web/config.json`.
+5. Save the `.hipnc`. It is **not** stored in git, so keep your own backup copy of it.
 
-> `build_all_blender.py` creates the `.blend` **from an empty scene**. Run it only to make a fresh file.
-> Don't run it over a file that holds your own collections.
+> The website still shows the Blender model of the site until the Houdini version replaces it. That doesn't change
+> anything for your design file. Changing the old Blender model itself: [SETUP appendix](SETUP.md#appendix-blender-until-the-website-switches-to-houdini).
 
 **Notes and research** (`site-model/BACKLOG.md`, `docs/`): plain Markdown.
 
@@ -59,8 +60,8 @@ reload the browser after each edit.
 
 ```bash
 git status                     # check: only the files you meant to change
-git add web/config.json site-model/exports/context.glb
-git commit -m "Add terrace massing option as Design layer"
+git add site-model/exports/design_clark.glb
+git commit -m "Add terrace massing option"
 git push -u origin clark/terrace-massing
 ```
 
@@ -70,7 +71,7 @@ Write the commit message as a short sentence saying *what changed*. Add files by
 **Never commit:**
 - reference drawings, PDFs, photos or screenshots from the EIR, the press or archives (copyright). Keep
   them in `site-model/references/`, which git ignores;
-- `.blend` files, the LiDAR `.laz` tile, or anything over about 50 MB;
+- `.hipnc` / `.blend` files, the LiDAR `.laz` tiles, or anything over about 50 MB;
 - passwords, tokens or API keys.
 
 ## 5. Open a pull request
@@ -121,21 +122,14 @@ Then start the next piece of work back at step 2.
 
 ## Things to know
 
-**`context.glb` is a single file.** Git can't combine two versions of it, so the most recently merged
-export wins. If someone else's model change was merged while you were working, the export from your
-`.blend` won't include it. Before you export:
+**One GLB per person.** Git can't combine two versions of a binary file, so each person exports only their own
+`site-model/exports/design_<name>.glb`, and only the site pipeline writes `context.glb`. Two people's pull requests
+then never touch the same file, and merging one never overwrites the other. Don't commit someone else's design file.
 
-1. Pull `main`.
-2. If `context.glb` changed, bring the other person's collection into your `.blend`. In Blender use
-   **File → Import → glTF** on `site-model/exports/context.glb`, keep only their collection, and delete
-   the rest. You can also ask Claude to do this.
-3. Then export.
-
-Say in the PR that it updates the model, so two model PRs aren't open at the same time.
-
-**Generated files.** `web/data/lidar_*.bin` and the files in `site-model/data/` come from the pipeline
-scripts. Change the scripts, not the outputs. Commit the outputs together with the script change that
-produced them.
+**Generated files.** `web/data/lidar_*`, `site-model/data/` and `site-model/houdini/handoff/` come from the
+pipeline scripts. Change the scripts, not the outputs. Commit the outputs together with the script change that
+produced them. The building names in `site-model/houdini/annotations/entities.json` are checked by hand: propose
+corrections in a PR or an issue rather than editing the automatic part.
 
 **Ask early.** A draft PR (`gh pr create --draft`) is a good way to show half-finished work and ask
 "is this the right direction?".

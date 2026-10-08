@@ -1,11 +1,13 @@
 """Local preview server that mirrors the GitHub Pages layout.
 
 Serves web/ and maps /assets/<file> to ../site-model/exports/<file>, which is what the Pages workflow
-copies at deploy time, so pages load the same URLs locally and online.
+copies at deploy time, so pages load the same URLs locally and online. /assets/models.json lists the GLB files
+there (the workflow writes the same list), so a new design_<name>.glb shows up in the viewer by itself.
 
   python web/serve.py            (http://localhost:8766)
   python web/serve.py 9000
 """
+import json
 import sys
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -16,6 +18,17 @@ EXPORTS = WEB.parent / "site-model" / "exports"
 
 
 class Handler(SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path.split("?", 1)[0] == "/assets/models.json":
+            body = json.dumps(sorted(p.name for p in EXPORTS.glob("*.glb"))).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        super().do_GET()
+
     def translate_path(self, path):
         clean = path.split("?", 1)[0].split("#", 1)[0]
         if clean.startswith("/assets/"):

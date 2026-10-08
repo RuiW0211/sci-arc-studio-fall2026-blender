@@ -5,6 +5,10 @@ NW corner of 4th and Hill Streets, Downtown Los Angeles.
 
 Live site: https://ruiw0211.github.io/sci-arc-studio-fall2026/
 
+**Moving to Houdini:** new 3D work, including design, is done in Houdini (see
+[site-model/houdini/README.md](site-model/houdini/README.md)). The website still shows the Blender model until the
+Houdini version replaces it.
+
 **Join the project:** [docs/SETUP.md](docs/SETUP.md) (install on macOS) and
 [docs/WORKFLOW.md](docs/WORKFLOW.md) (branch → pull request → discuss → merge).
 
@@ -12,17 +16,21 @@ Live site: https://ruiw0211.github.io/sci-arc-studio-fall2026/
 
 | Folder | Contents |
 |---|---|
-| `web/` | The public website (GitHub Pages serves this folder). `viewer.html` is the site model viewer, `lidar_preview.html` the LiDAR viewer. |
+| `web/` | The public website (GitHub Pages serves this folder). `viewer.html` is the site model viewer (Point cloud and Mesh modes). |
 | `web/research/` | The Y-1 research database: `data.json` holds every finding (sources, status, confidence); `index.html` searches and filters it. Link to one finding with `research/#<id>`. |
-| `site-model/scripts/` | Data pipeline (Python) and Blender build scripts for the 3D site model. |
+| `site-model/houdini/` | The Houdini work: the LiDAR pipeline (`tools/`), building entities, the design-scene script, hand-off files for analysis layers. |
+| `site-model/scripts/` | Data pipeline (Python) and Blender build scripts for the current web model. |
 | `site-model/data/` | Small processed inputs the Blender scripts need (terrain grids, building tiers, landmarks, trees). |
-| `site-model/exports/` | `context.glb`, the site model for the web (Draco-compressed). |
+| `site-model/exports/` | `context.glb`, the site model for the web (Draco-compressed), and `design_<name>.glb`, one design file per person. |
 | `site-model/BACKLOG.md` | Refinement to-do list (in Chinese). |
 
 All geometry shares one frame: **EPSG:26911 (NAD83 / UTM 11N), metres, NAVD88 heights**, with local origin
-**E 384580, N 3768520**. In Blender, Z is up; in the web viewer (three.js), x = east, y = up, z = −north.
+**E 384580, N 3768520**. In Houdini and the web viewer (three.js), x = east, y = up, z = −north; in Blender, Z is up.
 
 ## Rebuilding the site model
+
+This is the Blender pipeline of the current web model. The Houdini pipeline is in
+[site-model/houdini/README.md](site-model/houdini/README.md#site-pipeline-order).
 
 Python pipeline (run from `site-model/`, Python 3.10+, `pip install -r requirements.txt`; on macOS type
 `python3` for `python`):

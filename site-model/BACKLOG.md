@@ -142,6 +142,10 @@
   4. **LiDAR · Linked**：同一批 LiDAR 点贴上 Blender 物体标签，按图层统一着色，图层开关生效，点击识别物体并高亮。配色（2026-10-05 由 Rui 选定）来自 Coolors 的流行配色 `F0EAD2 · DDE5B6 · ADC178 · A98467 · 6C584C`：地形深褐 `#6C584C`、建筑奶油 `#F0EAD2`、树橄榄绿 `#ADC178`、Landmarks 浅褐 `#A98467`、Design 浅绿 `#DDE5B6`。其他 `#3A302A` 是从地形色调暗得来的，不在原配色里。高亮改为品红 `#FF3EA5`（Rui 选定）。之前的黄色 `#F0E442` 和橄榄绿的树同属黄绿色系；试过亮青蓝 `#3FC8FF` 和珊瑚红 `#FF6B4A` 后，选了品红。点地形只显示信息、不高亮（`"highlight": false`）。颜色在 `web/config.json` 里改。
   - 已知取舍：Landmarks 的浅褐不如之前的朱红醒目，这套配色也没有专门做色盲验证。之前用过的 Okabe-Ito（色盲友好）色值留作备选：地形 `#8F8A80`、建筑 `#56B4E9`、树 `#009E73`、Landmarks `#D55E00`、Design `#CC79A7`、其他 `#3F3F3F`。
   - 以后“按物体替换”的功能都做在 Linked 里，Raw 始终保持原样。代码里的模式 ID 仍然是 `mesh / points / lidar / linked`。
+- **2026-10-06 改为两种模式**（Rui 决定，分支 `rui/houdini-lidar-laz`）：`[ Mesh ] [ Point cloud ]`。
+  - Model · Points 删除。
+  - Raw 并入 Point cloud：点云扩大并按距离抽稀以后，Raw 已不再是“每个原始点”，和 Linked 用的是同一份数据。所以改成在 Color 里切换 Layer（原 Linked）、Height、Ground / other、Intensity（原 Raw）；任何上色下图层开关和点选都可用。
+  - 模式 ID 改为 `mesh / cloud`；旧的 `linked` / `lidar` 仍可识别（分别对应按图层、按高度上色）。
 - 目标（以后优化成两种模式）：
   1. **较写实的 Blender mesh**：地形贴 NAIP 航拍图，PBR 材质，光照烘焙；
   2. **高精度点云，而且要能和 mesh 同步修改更新**。

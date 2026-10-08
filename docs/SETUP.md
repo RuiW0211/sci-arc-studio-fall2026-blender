@@ -1,7 +1,7 @@
 # Setting up
 
 This guide takes you from nothing to working on the project: editing the website, the 3D site model and
-the data, and proposing changes through pull requests. It is written for **macOS**.
+your design, and proposing changes through pull requests. It is written for **macOS**.
 
 Set up only as far as you need:
 
@@ -9,8 +9,8 @@ Set up only as far as you need:
 |---|---|---|
 | **0. Look** | Open the site model in a browser | none: open https://ruiw0211.github.io/sci-arc-studio-fall2026/ |
 | **1. Website and content** | Change text, views, colours and pages; preview locally; open pull requests | 1–5 |
-| **2. 3D model** | Edit the Blender model and export it to the website | 1–7 |
-| **3. Data pipeline** | Re-run the LiDAR / terrain / building / tree processing | 1–8 |
+| **2. 3D model** | Model your design in Houdini and show it on the website | 1–7 |
+| **3. Data pipeline** | Re-run the LiDAR / building / tree processing (Rui) | 1–8 |
 
 Most people want level 2. Allow about an hour the first time.
 
@@ -93,8 +93,8 @@ python3 web/serve.py
 Open http://localhost:8766/ in your browser and click **Site model viewer**. Stop the server with
 **Ctrl + C**.
 
-**Check:** the viewer loads. The **Model · Mesh** button shows the 3D model, and **LiDAR · Raw** shows
-the point cloud.
+**Check:** the viewer loads. The **Mesh** button shows the 3D model, and **Point cloud** shows the
+LiDAR point cloud.
 
 `serve.py` serves the model the same way the live site does, so what you see locally is what will be
 published.
@@ -119,74 +119,117 @@ should mention branches and pull requests.
 
 ---
 
-## 6. Blender
+## 6. Houdini
 
-1. Download **Blender 5.2** (or the current 5.x) for **macOS Apple Silicon** (or Intel, if your Mac has
-   an Intel chip) from https://www.blender.org/download/ and drag it into Applications.
-2. Open it once from Applications. If macOS warns that it was downloaded from the internet, choose
-   **Open**.
-3. In Blender: **Blender menu → Settings → System → Network**, turn on **Allow Online Access**. The
-   Claude connection needs this.
+The project moved from Blender to Houdini in October 2026. New 3D work is done in Houdini; the website still shows
+the Blender model until the Houdini version replaces it (see [site-model/houdini/README.md](../site-model/houdini/README.md)).
 
-**Check:** in Terminal, this prints a version:
+1. Create a free SideFX account at https://www.sidefx.com/login/ .
+2. Download the **Houdini Launcher** for macOS from https://www.sidefx.com/download/ and open it.
+3. In the Launcher: **Installations → Install Houdini**, choose **Houdini 22.0** (production build), then the licence
+   **Houdini Apprentice** (free, non-commercial). Use Apprentice, like everyone else on the team: files saved by
+   another licence type (Indie, Education) can't be opened in Apprentice.
+4. Start Houdini once from the Launcher. If macOS asks for permissions, allow them.
 
-```bash
-/Applications/Blender.app/Contents/MacOS/Blender --version
+**Check:** Houdini opens, and **File → Save As** offers the `.hipnc` file type.
+
+Make your design scene. In Houdini: **Windows → Python Shell**, paste this one line (it is for the folder from §3; change
+`you` to your Mac user name):
+
+```python
+p = "/Users/you/GitHub/sci-arc-studio-fall2026/site-model/houdini/tools/new_design_scene.py"; exec(open(p).read(), {"__file__": p, "hou": hou})
 ```
 
-Build the project's Blender file. It is not stored in git; it is generated from the data in about 20
-seconds:
+Type your name (lowercase, for example `clark`) when it asks.
 
-```bash
-/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python site-model/scripts/build_all_blender.py
-```
-
-**Check:** it ends with `exported 690 objects`, or a similar number, and
-`site-model/blender/y1_context.blend` now exists. Open that file in Blender.
+**Check:** the scene shows the site model, the network has `Site_context` and `Design_<yourname>`, and
+`site-model/houdini/designs/<yourname>.hipnc` now exists.
 
 
-## 7. Let Claude work inside Blender (Blender MCP)
+## 7. Let Claude work inside Houdini (Houdini MCP)
 
-The official Blender Lab MCP has two parts, from https://projects.blender.org/lab/blender_mcp/releases:
-an add-on for Blender and an extension for Claude. Use the same release (version) for both.
+Claude talks to Houdini through the **houdini-mcp** server (a community project,
+https://github.com/oculairmedia/houdini-mcp) and Houdini's built-in RPC server, `hrpyc`. This setup has not yet been
+run on a Mac; tell us what differs.
 
-1. **Blender add-on.** Download `mcp-<version>.zip`. In Blender: **Settings → Get Extensions →** the
-   **⌄** menu at the top right → **Install from Disk…** → choose the zip. You can also drag the zip onto
-   the Blender window. Then, in **Settings → Add-ons → MCP**, tick **Auto Start**. That way the bridge
-   runs whenever Blender is open.
-2. **Claude extension.** Download `blender-<version>.mcpb`. Double-click it, or in the Claude app open
-   **Settings → Extensions** and install it from there. The exact wording of the menu can differ between
-   app versions. Restart Claude afterwards.
+1. **Install the server** (in Terminal):
 
-**Check:** with Blender open, start a new Claude Code session and ask *"list the collections in the open
-Blender scene"*. It should answer `Terrain, Buildings, Y1_Parcel, Landmarks, Trees`.
+   ```bash
+   git clone https://github.com/oculairmedia/houdini-mcp.git ~/houdini-mcp
+   cd ~/houdini-mcp
+   git checkout 7e5cd7a
+   python3 -m venv .venv
+   .venv/bin/pip install -e .
+   ```
 
-Your own modelling goes in **your own collections** (for example `Design` or `Option_A`). The build
-scripts rebuild `Terrain`, `Buildings`, `Y1_Parcel`, `Landmarks` and `Trees` from scratch, and anything
-hand-made inside those is lost on the next rebuild. Each collection becomes a layer toggle on the
-website automatically.
+   `7e5cd7a` is the version the project uses; don't update it without telling the team.
+2. **Register it with Claude.** Paste this in Terminal, or ask Claude in the Code tab to run it for you (if Terminal
+   says `claude: command not found`, install Claude Code from https://claude.com/claude-code):
 
-*Level 2 ends here. The export routine is in [WORKFLOW.md](WORKFLOW.md#3-change-the-3d-model).*
+   ```bash
+   claude mcp add --scope user houdini -e MCP_TRANSPORT=stdio -e HOUDINI_HOST=127.0.0.1 -e HOUDINI_PORT=18811 -- ~/houdini-mcp/.venv/bin/python -m houdini_mcp
+   ```
+
+3. **Start Houdini's side automatically.** In Houdini's **Python Shell**, paste (again with your path):
+
+   ```python
+   import os, sys, shutil; d = os.path.join(hou.homeHoudiniDirectory(), "python%d.%dlibs" % sys.version_info[:2]); os.makedirs(d, exist_ok=True); shutil.copy("/Users/you/GitHub/sci-arc-studio-fall2026/site-model/houdini/tools/pythonrc.py", d); print(d)
+   ```
+
+   This copies the project's `pythonrc.py` into your Houdini preferences. It starts `hrpyc` on port 18811 whenever
+   Houdini opens. (If you already had a `pythonrc.py` there, it is replaced.) Restart Houdini, then restart Claude.
+
+**Check:** with Houdini open, start a new Claude Code session and ask *"what nodes are in /obj of the open Houdini
+scene?"*. It should name `Site_context` and `Design_<yourname>`.
+
+Houdini must be open for Claude to reach it. Claude changes your scene only when you ask; save often
+(**File → Save**), because the `.hipnc` is not stored in git.
+
+*Level 2 ends here. The design routine is in [WORKFLOW.md](WORKFLOW.md#3-make-the-change).*
 
 ---
 
 ## 8. Data pipeline (optional)
 
-Only needed to change how the terrain, buildings, trees or LiDAR labels are computed. The processed
-results are already in `site-model/data/`.
+Only needed to change how the site itself is computed (terrain, buildings, trees, LiDAR labels, building entities).
+Everyone else uses the results in `site-model/exports/` and `site-model/houdini/`.
 
 ```bash
 cd ~/GitHub/sci-arc-studio-fall2026
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r site-model/requirements.txt
-python3 site-model/scripts/fetch_lidar.py      # downloads the 67 MB LiDAR tile (not in git)
 ```
 
-The order of the pipeline scripts is in the [README](../README.md#rebuilding-the-site-model). Run
-`source .venv/bin/activate` again in each new Terminal window.
+The Houdini pipeline and its order are in [site-model/houdini/README.md](../site-model/houdini/README.md#site-pipeline-order);
+it needs about 7 GB of downloads and staging. The old Blender pipeline is in the [README](../README.md#rebuilding-the-site-model).
+Run `source .venv/bin/activate` again in each new Terminal window.
 
-**Check:** `fetch_lidar.py` ends with `saved …laz` or `already there`.
+**Check:** `python3 -c "import laspy, shapely, sklearn"` prints nothing (no error).
+
+
+---
+
+## Appendix: Blender (until the website switches to Houdini)
+
+The website's current model was built in Blender. You only need this to change that model before the switch.
+
+1. Download **Blender 5.2** (or the current 5.x) for macOS from https://www.blender.org/download/ and drag it into
+   Applications. In Blender: **Settings → System → Network**, turn on **Allow Online Access**.
+2. Build the project's Blender file (not stored in git; about 20 seconds):
+
+   ```bash
+   /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python site-model/scripts/build_all_blender.py
+   ```
+
+   **Check:** it ends with `exported 690 objects`, or a similar number, and `site-model/blender/y1_context.blend` exists.
+3. Claude in Blender: the official Blender Lab MCP from https://projects.blender.org/lab/blender_mcp/releases. Install
+   `mcp-<version>.zip` in Blender (**Settings → Get Extensions → ⌄ → Install from Disk…**, then tick **Auto Start** in
+   **Settings → Add-ons → MCP**) and double-click `blender-<version>.mcpb` for Claude (same version for both). Restart
+   Claude.
+
+Hand-made work in Blender goes in its own collection; the build scripts rebuild `Terrain`, `Buildings`, `Y1_Parcel`,
+`Landmarks` and `Trees` from scratch.
 
 
 ---
@@ -199,5 +242,8 @@ The order of the pipeline scripts is in the [README](../README.md#rebuilding-the
 | `gh auth login` returns before you authorized | Run it again and leave Terminal open until it says **Logged in** |
 | `Permission denied` when pushing | Accept the repository invitation email, then re-run `gh auth login` |
 | Viewer page is blank | Open it through `python3 web/serve.py`, not by double-clicking the HTML file |
-| Claude can't see Blender | Blender must be open with the MCP add-on running (Settings → Add-ons → MCP); restart Claude after installing the extension |
+| Claude can't see Houdini | Houdini must be open. In its Python Shell, `import hrpyc; hrpyc.start_server(port=18811)` starts the connection by hand; if that works, redo §7 step 3. Restart Claude after `claude mcp add` |
+| Houdini says the file is from another licence | Everyone uses **Apprentice** (`.hipnc`); see §6 |
+| My design doesn't show on the website | Check that `site-model/exports/design_<name>.glb` exists (Render `/out/export_design`), then reload the viewer |
+| Claude can't see Blender (appendix) | Blender must be open with the MCP add-on running (Settings → Add-ons → MCP); restart Claude after installing the extension |
 | Something else | Copy the exact error and the command you ran into a pull request comment, or ask Claude in the Code tab |

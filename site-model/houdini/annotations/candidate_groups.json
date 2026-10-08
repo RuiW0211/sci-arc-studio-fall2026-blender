@@ -1,0 +1,878 @@
+[
+ {
+  "group": "G01",
+  "lat": 34.050598,
+  "lon": -118.250528,
+  "local_xy_m": [
+   2,
+   -48
+  ],
+  "distance_m": 49,
+  "parts": [
+   {
+    "name": "Metro_Canopy_Glass",
+    "layer": "Landmarks",
+    "height_m": 5.3,
+    "points": 2863
+   }
+  ]
+ },
+ {
+  "group": "G02",
+  "lat": 34.051624,
+  "lon": -118.250226,
+  "local_xy_m": [
+   31,
+   65
+  ],
+  "distance_m": 72,
+  "parts": [
+   {
+    "name": "BLD_485426841221",
+    "layer": "Buildings",
+    "height_m": 235.2,
+    "points": 97856
+   },
+   {
+    "name": "BLD_485649841129",
+    "layer": "Buildings",
+    "height_m": 234.2,
+    "points": 63
+   },
+   {
+    "name": "BLD_485752841247",
+    "layer": "Buildings",
+    "height_m": 230.6,
+    "points": 1674
+   },
+   {
+    "name": "BLD_485560841547",
+    "layer": "Buildings",
+    "height_m": 186.5,
+    "points": 73456
+   },
+   {
+    "name": "BLD_485753841576",
+    "layer": "Buildings",
+    "height_m": 60.2,
+    "points": 62832
+   },
+   {
+    "name": "BLD_486133841657",
+    "layer": "Buildings",
+    "height_m": 49.2,
+    "points": 119452
+   },
+   {
+    "name": "BLD_486271841675",
+    "layer": "Buildings",
+    "height_m": 11.3,
+    "points": 253
+   },
+   {
+    "name": "AF_Track_Deck",
+    "layer": "Landmarks",
+    "height_m": 8.4,
+    "points": 4157
+   },
+   {
+    "name": "AF_Car_Lower",
+    "layer": "Landmarks",
+    "height_m": 7.2,
+    "points": 506
+   },
+   {
+    "name": "AF_Upper_Station",
+    "layer": "Landmarks",
+    "height_m": 6.6,
+    "points": 109
+   },
+   {
+    "name": "BLD_486229841721",
+    "layer": "Buildings",
+    "height_m": 6.0,
+    "points": 21
+   },
+   {
+    "name": "AF_Car_Upper",
+    "layer": "Landmarks",
+    "height_m": 5.9,
+    "points": 356
+   },
+   {
+    "name": "AF_Lower_Station",
+    "layer": "Landmarks",
+    "height_m": 5.3,
+    "points": 1237
+   },
+   {
+    "name": "AF_Pier_08",
+    "layer": "Landmarks",
+    "height_m": 4.3,
+    "points": 125
+   },
+   {
+    "name": "AF_Pier_05",
+    "layer": "Landmarks",
+    "height_m": 2.7,
+    "points": 41
+   },
+   {
+    "name": "AF_Pier_06",
+    "layer": "Landmarks",
+    "height_m": 2.4,
+    "points": 62
+   },
+   {
+    "name": "AF_Pier_01",
+    "layer": "Landmarks",
+    "height_m": 1.6,
+    "points": 95
+   },
+   {
+    "name": "AF_Pier_00",
+    "layer": "Landmarks",
+    "height_m": 1.6,
+    "points": 98
+   },
+   {
+    "name": "AF_Pier_07",
+    "layer": "Landmarks",
+    "height_m": 1.3,
+    "points": 68
+   },
+   {
+    "name": "AF_Pier_03",
+    "layer": "Landmarks",
+    "height_m": 1.0,
+    "points": 104
+   },
+   {
+    "name": "AF_Pier_02",
+    "layer": "Landmarks",
+    "height_m": 0.7,
+    "points": 79
+   },
+   {
+    "name": "AF_Pier_04",
+    "layer": "Landmarks",
+    "height_m": 0.4,
+    "points": 63
+   },
+   {
+    "name": "AF_Pier_09",
+    "layer": "Landmarks",
+    "height_m": 0.1,
+    "points": 120
+   }
+  ]
+ },
+ {
+  "group": "G03",
+  "lat": 34.050515,
+  "lon": -118.249936,
+  "local_xy_m": [
+   56,
+   -58
+  ],
+  "distance_m": 81,
+  "parts": [
+   {
+    "name": "BLD_485960840869",
+    "layer": "Buildings",
+    "height_m": 4.1,
+    "points": 415
+   },
+   {
+    "name": "BLD_485951840853",
+    "layer": "Buildings",
+    "height_m": 4.1,
+    "points": 926
+   }
+  ]
+ },
+ {
+  "group": "G04",
+  "lat": 34.050678,
+  "lon": -118.249634,
+  "local_xy_m": [
+   84,
+   -41
+  ],
+  "distance_m": 93,
+  "parts": [
+   {
+    "name": "BLD_486044840929",
+    "layer": "Buildings",
+    "height_m": 5.6,
+    "points": 5005
+   }
+  ]
+ },
+ {
+  "group": "G05",
+  "lat": 34.050136,
+  "lon": -118.249968,
+  "local_xy_m": [
+   53,
+   -100
+  ],
+  "distance_m": 113,
+  "parts": [
+   {
+    "name": "BLD_202000039516",
+    "layer": "Buildings",
+    "height_m": 7.1,
+    "points": 2956
+   }
+  ]
+ },
+ {
+  "group": "G06",
+  "lat": 34.050549,
+  "lon": -118.249438,
+  "local_xy_m": [
+   102,
+   -55
+  ],
+  "distance_m": 116,
+  "parts": [
+   {
+    "name": "BLD_486107840872",
+    "layer": "Buildings",
+    "height_m": 4.0,
+    "points": 478
+   }
+  ]
+ },
+ {
+  "group": "G07",
+  "lat": 34.050543,
+  "lon": -118.249412,
+  "local_xy_m": [
+   104,
+   -56
+  ],
+  "distance_m": 118,
+  "parts": [
+   {
+    "name": "BLD_486098840863",
+    "layer": "Buildings",
+    "height_m": 3.4,
+    "points": 283
+   }
+  ]
+ },
+ {
+  "group": "G08",
+  "lat": 34.051081,
+  "lon": -118.251916,
+  "local_xy_m": [
+   -126,
+   7
+  ],
+  "distance_m": 126,
+  "parts": [
+   {
+    "name": "PC_00001",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 28.9,
+    "points": 233
+   }
+  ]
+ },
+ {
+  "group": "G09",
+  "lat": 34.050962,
+  "lon": -118.251937,
+  "local_xy_m": [
+   -128,
+   -7
+  ],
+  "distance_m": 128,
+  "parts": [
+   {
+    "name": "PC_00002",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 14.8,
+    "points": 975
+   }
+  ]
+ },
+ {
+  "group": "G10",
+  "lat": 34.050074,
+  "lon": -118.251347,
+  "local_xy_m": [
+   -75,
+   -106
+  ],
+  "distance_m": 129,
+  "parts": [
+   {
+    "name": "BLD_485597840707",
+    "layer": "Buildings",
+    "height_m": 54.8,
+    "points": 118242
+   },
+   {
+    "name": "BLD_485554840577",
+    "layer": "Buildings",
+    "height_m": 54.8,
+    "points": 897
+   },
+   {
+    "name": "BLD_485494840623",
+    "layer": "Buildings",
+    "height_m": 54.8,
+    "points": 61
+   },
+   {
+    "name": "BLD_485512840897",
+    "layer": "Buildings",
+    "height_m": 18.7,
+    "points": 15525
+   }
+  ]
+ },
+ {
+  "group": "G11",
+  "lat": 34.050618,
+  "lon": -118.249195,
+  "local_xy_m": [
+   125,
+   -48
+  ],
+  "distance_m": 133,
+  "parts": [
+   {
+    "name": "BLD_486434841045",
+    "layer": "Buildings",
+    "height_m": 53.2,
+    "points": 39854
+   },
+   {
+    "name": "BLD_486254841067",
+    "layer": "Buildings",
+    "height_m": 42.5,
+    "points": 11291
+   },
+   {
+    "name": "BLD_486163841131",
+    "layer": "Buildings",
+    "height_m": 38.2,
+    "points": 17716
+   },
+   {
+    "name": "BLD_486339840977",
+    "layer": "Buildings",
+    "height_m": 28.5,
+    "points": 61250
+   },
+   {
+    "name": "BLD_486109840980",
+    "layer": "Buildings",
+    "height_m": 28.0,
+    "points": 942
+   },
+   {
+    "name": "BLD_486122840996",
+    "layer": "Buildings",
+    "height_m": 27.8,
+    "points": 265
+   },
+   {
+    "name": "BLD_2014092851240000",
+    "layer": "Buildings",
+    "height_m": 27.8,
+    "points": 10561
+   },
+   {
+    "name": "BLD_486086841025",
+    "layer": "Buildings",
+    "height_m": 27.6,
+    "points": 62
+   },
+   {
+    "name": "BLD_486106841001",
+    "layer": "Buildings",
+    "height_m": 27.6,
+    "points": 25
+   },
+   {
+    "name": "BLD_486283840807",
+    "layer": "Buildings",
+    "height_m": 14.0,
+    "points": 17085
+   },
+   {
+    "name": "BLD_486149840824",
+    "layer": "Buildings",
+    "height_m": 13.3,
+    "points": 8825
+   },
+   {
+    "name": "BLD_486084840614",
+    "layer": "Buildings",
+    "height_m": 10.7,
+    "points": 13437
+   },
+   {
+    "name": "BLD_2014092854250000",
+    "layer": "Buildings",
+    "height_m": 9.9,
+    "points": 11017
+   },
+   {
+    "name": "BLD_486147840700",
+    "layer": "Buildings",
+    "height_m": 6.7,
+    "points": 5131
+   },
+   {
+    "name": "BLD_486268840860",
+    "layer": "Buildings",
+    "height_m": 6.4,
+    "points": 7959
+   }
+  ]
+ },
+ {
+  "group": "G12",
+  "lat": 34.051005,
+  "lon": -118.25203,
+  "local_xy_m": [
+   -137,
+   -2
+  ],
+  "distance_m": 137,
+  "parts": [
+   {
+    "name": "PC_00003",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 4.5,
+    "points": 208
+   }
+  ]
+ },
+ {
+  "group": "G13",
+  "lat": 34.050567,
+  "lon": -118.252494,
+  "local_xy_m": [
+   -180,
+   -50
+  ],
+  "distance_m": 187,
+  "parts": [
+   {
+    "name": "BLD_485195840874",
+    "layer": "Buildings",
+    "height_m": 152.7,
+    "points": 1657
+   }
+  ]
+ },
+ {
+  "group": "G14",
+  "lat": 34.052314,
+  "lon": -118.251886,
+  "local_xy_m": [
+   -121,
+   143
+  ],
+  "distance_m": 188,
+  "parts": [
+   {
+    "name": "PC_00004",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 10.0,
+    "points": 359
+   }
+  ]
+ },
+ {
+  "group": "G15",
+  "lat": 34.049294,
+  "lon": -118.250344,
+  "local_xy_m": [
+   17,
+   -193
+  ],
+  "distance_m": 194,
+  "parts": [
+   {
+    "name": "BLD_485946840512",
+    "layer": "Buildings",
+    "height_m": 55.0,
+    "points": 72245
+   },
+   {
+    "name": "BLD_485882840645",
+    "layer": "Buildings",
+    "height_m": 55.0,
+    "points": 210
+   },
+   {
+    "name": "BLD_485787840473",
+    "layer": "Buildings",
+    "height_m": 48.2,
+    "points": 64098
+   },
+   {
+    "name": "BLD_485859840382",
+    "layer": "Buildings",
+    "height_m": 45.4,
+    "points": 16827
+   },
+   {
+    "name": "BLD_485731840263",
+    "layer": "Buildings",
+    "height_m": 25.0,
+    "points": 22502
+   },
+   {
+    "name": "BLD_485794840372",
+    "layer": "Buildings",
+    "height_m": 20.5,
+    "points": 10636
+   },
+   {
+    "name": "BLD_485757840326",
+    "layer": "Buildings",
+    "height_m": 19.4,
+    "points": 13965
+   }
+  ]
+ },
+ {
+  "group": "G16",
+  "lat": 34.049634,
+  "lon": -118.251817,
+  "local_xy_m": [
+   -119,
+   -154
+  ],
+  "distance_m": 194,
+  "parts": [
+   {
+    "name": "BLD_202000039504",
+    "layer": "Buildings",
+    "height_m": 20.7,
+    "points": 52738
+   },
+   {
+    "name": "PC_00006",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 9.9,
+    "points": 4390
+   }
+  ]
+ },
+ {
+  "group": "G17",
+  "lat": 34.050885,
+  "lon": -118.252678,
+  "local_xy_m": [
+   -197,
+   -14
+  ],
+  "distance_m": 197,
+  "parts": [
+   {
+    "name": "BLD_485068840833",
+    "layer": "Buildings",
+    "height_m": 152.6,
+    "points": 36940
+   },
+   {
+    "name": "BLD_485127840953",
+    "layer": "Buildings",
+    "height_m": 148.5,
+    "points": 18176
+   },
+   {
+    "name": "BLD_485131840988",
+    "layer": "Buildings",
+    "height_m": 145.4,
+    "points": 8893
+   },
+   {
+    "name": "BLD_202000039614",
+    "layer": "Buildings",
+    "height_m": 13.8,
+    "points": 7903
+   },
+   {
+    "name": "BLD_202000039607",
+    "layer": "Buildings",
+    "height_m": 11.7,
+    "points": 2484
+   }
+  ]
+ },
+ {
+  "group": "G18",
+  "lat": 34.051601,
+  "lon": -118.252587,
+  "local_xy_m": [
+   -187,
+   65
+  ],
+  "distance_m": 198,
+  "parts": [
+   {
+    "name": "PC_00005",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 10.1,
+    "points": 8139
+   }
+  ]
+ },
+ {
+  "group": "G19",
+  "lat": 34.051832,
+  "lon": -118.252734,
+  "local_xy_m": [
+   -200,
+   91
+  ],
+  "distance_m": 220,
+  "parts": [
+   {
+    "name": "PC_00007",
+    "layer": "Buildings_LiDAR_only",
+    "height_m": 9.2,
+    "points": 157
+   }
+  ]
+ },
+ {
+  "group": "G20",
+  "lat": 34.049649,
+  "lon": -118.248797,
+  "local_xy_m": [
+   160,
+   -156
+  ],
+  "distance_m": 223,
+  "parts": [
+   {
+    "name": "BLD_486309840616",
+    "layer": "Buildings",
+    "height_m": 21.0,
+    "points": 12379
+   },
+   {
+    "name": "BLD_201700195171",
+    "layer": "Buildings",
+    "height_m": 10.2,
+    "points": 10438
+   },
+   {
+    "name": "BLD_noid1898011",
+    "layer": "Buildings",
+    "height_m": 6.5,
+    "points": 58
+   },
+   {
+    "name": "BLD_486306840566",
+    "layer": "Buildings",
+    "height_m": 5.9,
+    "points": 6707
+   },
+   {
+    "name": "BLD_486267840543",
+    "layer": "Buildings",
+    "height_m": 5.7,
+    "points": 6227
+   }
+  ]
+ },
+ {
+  "group": "G21",
+  "lat": 34.050164,
+  "lon": -118.248311,
+  "local_xy_m": [
+   206,
+   -99
+  ],
+  "distance_m": 228,
+  "parts": [
+   {
+    "name": "BLD_486465840742",
+    "layer": "Buildings",
+    "height_m": 15.6,
+    "points": 13788
+   },
+   {
+    "name": "BLD_486393840708",
+    "layer": "Buildings",
+    "height_m": 7.7,
+    "points": 8982
+   },
+   {
+    "name": "BLD_202000039544",
+    "layer": "Buildings",
+    "height_m": 6.7,
+    "points": 5833
+   },
+   {
+    "name": "BLD_486415840738",
+    "layer": "Buildings",
+    "height_m": 5.8,
+    "points": 7375
+   },
+   {
+    "name": "BLD_486377840685",
+    "layer": "Buildings",
+    "height_m": 4.4,
+    "points": 3308
+   }
+  ]
+ },
+ {
+  "group": "G22",
+  "lat": 34.051316,
+  "lon": -118.248092,
+  "local_xy_m": [
+   227,
+   28
+  ],
+  "distance_m": 229,
+  "parts": [
+   {
+    "name": "BLD_202000039628",
+    "layer": "Buildings",
+    "height_m": 25.4,
+    "points": 21792
+   }
+  ]
+ },
+ {
+  "group": "G23",
+  "lat": 34.049006,
+  "lon": -118.251198,
+  "local_xy_m": [
+   -62,
+   -224
+  ],
+  "distance_m": 233,
+  "parts": [
+   {
+    "name": "BLD_485565840314",
+    "layer": "Buildings",
+    "height_m": 10.7,
+    "points": 2614
+   }
+  ]
+ },
+ {
+  "group": "G24",
+  "lat": 34.049434,
+  "lon": -118.252308,
+  "local_xy_m": [
+   -164,
+   -176
+  ],
+  "distance_m": 240,
+  "parts": [
+   {
+    "name": "BLD_202000039481",
+    "layer": "Buildings",
+    "height_m": 83.4,
+    "points": 35174
+   }
+  ]
+ },
+ {
+  "group": "G25",
+  "lat": 34.052148,
+  "lon": -118.252815,
+  "local_xy_m": [
+   -207,
+   126
+  ],
+  "distance_m": 243,
+  "parts": [
+   {
+    "name": "BLD_485112841424",
+    "layer": "Buildings",
+    "height_m": 186.6,
+    "points": 52283
+   }
+  ]
+ },
+ {
+  "group": "G26",
+  "lat": 34.049786,
+  "lon": -118.248363,
+  "local_xy_m": [
+   200,
+   -141
+  ],
+  "distance_m": 245,
+  "parts": [
+   {
+    "name": "BLD_486434840592",
+    "layer": "Buildings",
+    "height_m": 4.0,
+    "points": 585
+   }
+  ]
+ },
+ {
+  "group": "G27",
+  "lat": 34.052965,
+  "lon": -118.251846,
+  "local_xy_m": [
+   -117,
+   215
+  ],
+  "distance_m": 245,
+  "parts": [
+   {
+    "name": "BLD_485357841728",
+    "layer": "Buildings",
+    "height_m": 222.4,
+    "points": 70196
+   }
+  ]
+ },
+ {
+  "group": "G28",
+  "lat": 34.049412,
+  "lon": -118.248721,
+  "local_xy_m": [
+   167,
+   -182
+  ],
+  "distance_m": 247,
+  "parts": [
+   {
+    "name": "BLD_201700195153",
+    "layer": "Buildings",
+    "height_m": 5.1,
+    "points": 9198
+   }
+  ]
+ },
+ {
+  "group": "G29",
+  "lat": 34.049111,
+  "lon": -118.251903,
+  "local_xy_m": [
+   -127,
+   -212
+  ],
+  "distance_m": 247,
+  "parts": [
+   {
+    "name": "BLD_202000039462",
+    "layer": "Buildings",
+    "height_m": 73.0,
+    "points": 14874
+   }
+  ]
+ }
+]
