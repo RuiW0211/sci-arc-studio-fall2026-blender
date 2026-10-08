@@ -2,7 +2,9 @@
   /assets/<f>        -> site-model/houdini/out/<f>        (Houdini GLB)
   /data/<f>          -> site-model/houdini/out/data/<f>   when that file exists (Houdini LiDAR labels), else web/data/<f>
   /ref/<f>           -> site-model/exports/<f>            (the Blender original, for comparisons)
-  /data/entities.json -> site-model/houdini/annotations/entities.json (building entities)"""
+  /data/entities.json -> site-model/houdini/annotations/entities.json (building entities)
+  /config.json       -> web/config.json plus "entities" (the live site has no entities until the switch to Houdini)"""
+import json
 import sys
 from functools import partial
 from http.server import ThreadingHTTPServer
@@ -14,6 +16,16 @@ serve.EXPORTS = REPO / "site-model" / "houdini" / "out"
 HDATA = REPO / "site-model" / "houdini" / "out" / "data"
 ANN = REPO / "site-model" / "houdini" / "annotations" / "entities.json"   # building entities (hand-made)
 class H(serve.Handler):
+    def do_GET(self):
+        if self.path.split("?", 1)[0] == "/config.json":
+            cfg = json.loads((REPO / "web" / "config.json").read_text(encoding="utf-8"))
+            cfg["entities"] = "data/entities.json"
+            body = json.dumps(cfg).encode()
+            self.send_response(200); self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+            return
+        super().do_GET()
+
     def translate_path(self, path):
         clean = path.split("?", 1)[0].split("#", 1)[0]
         if clean.startswith("/ref/"):

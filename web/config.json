@@ -2,7 +2,6 @@
   "_comment": "Viewer settings. Layers come from the GLB (extras.layer = Blender collection); this file only gives display names, order, default visibility and the Linked LiDAR colour. Unknown layers still appear under their own name (grey in Linked LiDAR). Design files site-model/exports/design_<name>.glb load on top of the model (listed in assets/models.json); their layers default to the Design style, visible, also over the point cloud. Camera values are three.js coordinates: x = east, y = up (m, NAVD88), z = -north, from the site origin E 384580 / N 3768520.",
   "model": "assets/context.glb",
   "designs": "assets/models.json",
-  "entities": "data/entities.json",
   "lidar": { "points": "data/lidar_points.bin", "meta": "data/lidar_points.json", "size": 0.25 },
   "linked": { "_comment": "Point cloud, Color = Layer: points coloured by the layer colours below, from the Coolors trending palette F0EAD2 · DDE5B6 · ADC178 · A98467 · 6C584C (Other darkened from Terrain). The clicked object turns the highlight colour unless its layer has \"highlight\": false (Terrain: too large to light up).", "highlight": "#FF3EA5" },
   "_modes": "mesh = the model; cloud = the LiDAR point cloud (old names: linked = cloud by layer, lidar = cloud by height). cloudColor = the first colouring: layer / height / class / intensity",
@@ -21,6 +20,13 @@
     "Buildings_LiDAR_only": { "label": "Structures (not in LARIAC)",     "order": 2.5, "visible": true, "color": "#D9CFB0" },
     "Design":    { "label": "Design",             "order": 6, "visible": false, "color": "#DDE5B6" },
     "_other":    { "label": "Other (LiDAR only)", "order": 9, "visible": true, "color": "#3A302A" }
+  },
+  "population": {
+    "_comment": "Modeled day/night population (site-model/scripts/prep_population.py): one point per person, size in metres. start = clock at load (hours), speed = simulated seconds per real second. routeColor / neon / neonStrength: the selected person's light trail (neonStrength scales its opacity).",
+    "meta": "data/population.json", "y1": "data/y1_parcel.json",
+    "size": 0.7, "start": 8.5, "speed": 300,
+    "routeColor": "#00E5FF", "neon": true, "neonStrength": 1,
+    "colors": { "resident": "#3A86FF", "worker": "#FB8500", "hotel": "#8338EC", "visitor": "#06A77D" }
   },
   "views": [
     { "name": "Default",            "position": [260, 260, 300],      "target": [0, 100, 0] },

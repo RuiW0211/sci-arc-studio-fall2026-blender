@@ -191,8 +191,8 @@ Houdini must be open for Claude to reach it. Claude changes your scene only when
 
 ## 8. Data pipeline (optional)
 
-Only needed to change how the site itself is computed (terrain, buildings, trees, LiDAR labels, building entities).
-Everyone else uses the results in `site-model/exports/` and `site-model/houdini/`.
+Only needed to change how the site itself is computed (terrain, buildings, trees, LiDAR labels, building entities)
+or the modeled population. Everyone else uses the results in `site-model/exports/`, `site-model/houdini/` and `web/data/`.
 
 ```bash
 cd ~/GitHub/sci-arc-studio-fall2026
@@ -230,6 +230,10 @@ The website's current model was built in Blender. You only need this to change t
 
 Hand-made work in Blender goes in its own collection; the build scripts rebuild `Terrain`, `Buildings`, `Y1_Parcel`,
 `Landmarks` and `Trees` from scratch.
+
+To change the population layer, edit `site-model/data/population/assumptions.json`, then run
+`python3 site-model/scripts/prep_population.py` (about 30 s). It prints how many people are on site at
+several hours; check those against the previous run before you open a PR.
 
 
 ---

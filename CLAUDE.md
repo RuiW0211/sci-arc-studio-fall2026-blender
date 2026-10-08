@@ -25,7 +25,7 @@ Houdini version reaches the same level; then it replaces them. Until then the Bl
 ## Layout
 
 - `web/` is the GitHub Pages root. Plain HTML + ES modules; three.js comes from jsDelivr through an import map. There is no build step: open a page through a local server (for example `python -m http.server` from the repo root) and reload.
-- `site-model/scripts/`: the Python pipeline (`fetch_data`, `fetch_lidar`, `lidar_dsm`, `lidar_tiers`, `prep_*`, `export_lidar_preview`) runs with system Python. The `build_*.py` scripts run inside Blender; `build_all_blender.py` runs all three headless from an empty scene, saves `site-model/blender/y1_context.blend` and exports the GLB.
+- `site-model/scripts/`: the Python pipeline (`fetch_data`, `fetch_lidar`, `lidar_dsm`, `lidar_tiers`, `prep_*`, `export_lidar_preview`, `fetch_population`) runs with system Python. The `build_*.py` scripts run inside Blender; `build_all_blender.py` runs all three headless from an empty scene, saves `site-model/blender/y1_context.blend` and exports the GLB.
 - Contributor docs: `docs/SETUP.md` (install, macOS-first) and `docs/WORKFLOW.md` (branch → PR → discuss → owner merges). Keep them in sync when tools or steps change.
 - `site-model/data/`: small processed inputs, committed so Blender builds work without the raw LiDAR.
 - `site-model/houdini/`: the Houdini work. `tools/` (Python pipeline and `new_design_scene.py`), `vex/`, `annotations/entities.json` (building entities), `handoff/` (buildings + terrain for analysis layers). `in/`, `work/`, `out/` and all scenes are git-ignored.

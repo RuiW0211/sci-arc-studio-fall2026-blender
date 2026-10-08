@@ -178,6 +178,15 @@
 - [ ] ⭐ 剖切或切片，用来看坡地的高差。
 - [ ] ⭐ 测距和高差测量。
 
+### 8.x 人口层（模拟的典型一天，2026-10-05 加入）
+- [x] ⭐⭐⭐ 一个点代表一个人：通勤、午餐、下班、夜间活动，在建筑里按楼层分布，在 OSM 步行网络上移动（`fetch_population.py` → `prep_population.py` → `web/js/population.js`）。
+  - 数据：LODES 2022（就业）、2020 人口普查（居民）、ACS（到达 / 出发时间、交通方式）、NHTS 2022（午餐和出行时间）、Assessor（建筑面积和用途，代替房地产 listing）、OSM。
+  - 所有假设都在 `site-model/data/population/assumptions.json`，网页 Method 里能看到。**这是模拟，不是实时或观测数据。**
+- [ ] ⭐⭐ 交通方式和到达时间目前用的是整个洛杉矶市的 ACS 平均值。Downtown 的公交比例应该更高：从 CTPP 网站手动下载 tract 级的 workplace 表来替换。
+- [ ] ⭐⭐ 访客人数（Grand Central Market、MOCA、晚餐）目前是数量级假设，找到公开的统计后替换。
+- [ ] ⭐ 历史酒店（例如 Biltmore）按面积估算的房间数偏高，可以在 assumptions 里加上已知的房间数。
+- [ ] ⭐ Y-1 上的设计方案改变人流：把设计里的路径和建筑加进网络和楼层分布。
+
 ## 9. 工程化
 
 **Blender 更新 → 网页同步（做 Site model viewer 时一起完成，之后要定期检查）**

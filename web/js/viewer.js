@@ -521,6 +521,45 @@ function renderViews() {
 }
 renderViews();
 
+// ---------- population: a modeled day, one point per person (js/population.js), loaded on first use ----------
+let pop = null;
+$("#popOn").onchange = async (e) => {
+  const on = e.target.checked;
+  if (on && !pop) {
+    e.target.disabled = true;
+    status("Loading population…");
+    const { createPopulation } = await import("./population.js");
+    pop = await createPopulation({ cfg, scene, camera, renderer, layers, y1Url: cfg.population.y1,
+      onInfo: personTag });
+    status("");
+    e.target.disabled = false;
+  }
+  $("#popBox").hidden = !on;
+  pop?.setVisible(on);
+  if (!on) for (const s of [...selection]) if (s.key.startsWith("pop:")) deselect(s.key);
+  invalidate();
+};
+// its own controls (time, play, day, see-through buildings ...) change the picture: draw again
+for (const ev of ["input", "change", "click"]) $("#popSec").addEventListener(ev, () => invalidate());
+// a person's modeled day (population.js story()) as a floating tag that follows them
+let popSelecting = false;
+function personTag(html, pos) {
+  const d = document.createElement("div"); d.innerHTML = html;
+  const h2 = d.querySelector("h2"), num = h2?.querySelector("span")?.textContent || "";
+  const title = (h2?.firstChild?.textContent || "Person").trim();
+  const rows = [...d.querySelectorAll("tr")].map((tr) => [...tr.children].map((c) => c.textContent));
+  const day = d.querySelector(".label")?.textContent || "";
+  for (const t of (d.querySelector(".trips")?.innerHTML || "").split("<br>").filter(Boolean)) {
+    const x = document.createElement("div"); x.innerHTML = t;
+    const [time, ...rest] = x.textContent.split(" "); rows.push([time, rest.join(" ")]);
+  }
+  const note = d.querySelector(".note")?.textContent || "";
+  const a = { centre: pos, topY: pos.y, height: 0 };
+  popSelecting = true;
+  select(`pop:${num}`, a, () => tagHTML(`Modeled person ${num}`, title, day, rows, note), [], false);
+  popSelecting = false;
+}
+
 // ---------- click for details (mesh mode) ----------
 const ray = new THREE.Raycaster();
 const SKIP_KEYS = new Set(["layer", "name", "scatter5"]);
@@ -529,6 +568,7 @@ renderer.domElement.addEventListener("pointerdown", (e) => (down = [e.clientX, e
 renderer.domElement.addEventListener("pointerup", (e) => {
   if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 4) return;
   ray.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
+  if (pop?.pick(ray)) return;  // a person: their modeled day (personTag)
   const visible = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
   const add = e.shiftKey;     // shift + click: add to / take out of the selection
   const layerOf = (o) => { for (; o; o = o.parent) if (o.userData.layer) return o.userData.layer; };
@@ -626,11 +666,12 @@ function select(key, a, build, objs, add) {
 function deselect(key) {
   const i = selection.findIndex((s) => s.key === key); if (i < 0) return;
   const [s] = selection.splice(i, 1); s.el.remove(); s.line.remove();
+  if (s.key.startsWith("pop:") && !popSelecting) pop?.clearSelection();
   if (lidar && mode === "cloud") paintCloud();
   invalidate();
 }
 function clearSelection() {
-  for (const s of selection.splice(0)) { s.el.remove(); s.line.remove(); }
+  for (const s of selection.splice(0)) { s.el.remove(); s.line.remove(); if (s.key.startsWith("pop:") && !popSelecting) pop?.clearSelection(); }
   if (lidar && mode === "cloud") paintCloud();
   invalidate();
 }
@@ -874,6 +915,8 @@ renderer.setAnimationLoop((now) => {
   if (controls.update()) { dirty = true; lastMove = now; }   // damping keeps moving the camera after the drag ends
   // LiDAR level of detail: recomputed whenever the view changed or a chunk is still easing to its target
   if (lidar && mode === "cloud" && (dirty || lodEasing)) { lodEasing = updateLod(); if (lodEasing) dirty = true; }
+  // the population plays on its own clock: draw while it plays or after one of its settings changed
+  if (pop?.visible) { const was = pop.state.dirty; pop.tick(now); if (was || pop.state.playing) dirty = true; }
   if (!dirty) return;
   dirty = false;
   renderer.render(scene, camera);
@@ -881,7 +924,7 @@ renderer.setAnimationLoop((now) => {
   adaptGlass(now);
 });
 window.__viewer = {
-  layers, get mode() { return mode; }, setMode, get lidar() { return lidar; },
+  layers, get mode() { return mode; }, setMode, get lidar() { return lidar; }, get population() { return pop; },
   camera, controls, renderer, lidarGroup, invalidate,   // debugging / performance checks
   // debugging / screenshots: select entities by id, e.g. selectEntities(["E001", "E005"])
   selectEntities(ids) {

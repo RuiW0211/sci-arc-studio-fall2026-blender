@@ -45,7 +45,13 @@ python scripts/prep_blender.py        # terrain (2 m + 0.5 m patch), buildings, 
 python scripts/prep_landmarks.py      # Angels Flight, Metro portal
 python scripts/prep_trees.py          # trees from LiDAR canopy
 python scripts/export_lidar_preview.py  # web/data/lidar_points.bin + lidar_object.bin (labels)
+python scripts/fetch_population.py    # LODES, ACS, NHTS, Assessor, OSM -> data/population/ (raw/ not in git)
+python scripts/prep_population.py     # modeled day, one point per person -> web/data/population.{json,bin}
 ```
+
+The population layer is a **modeled typical day, not observed or real-time data**. Every number that is not
+from a dataset is in `site-model/data/population/assumptions.json`. Edit it, rerun `prep_population.py` and
+reload the viewer.
 
 Then build the Blender file. `build_all_blender.py` runs `build_blender.py`, `build_landmarks.py` and
 `build_trees.py` in an empty scene, saves `site-model/blender/y1_context.blend` and exports the GLB (about
